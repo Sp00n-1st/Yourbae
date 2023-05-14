@@ -25,7 +25,7 @@ class AuthController extends GetxController {
         FirebaseFirestore.instance.collection('user').doc(auth.uid);
     var querySnapshot = await collection.get();
     Map<String, dynamic>? data = querySnapshot.data();
-    var name = data!['firstName'];
+    var name = data!['name'];
     var isDisable = data['isDisable'];
     if (isDisable == false) {
       if (auth.emailVerified == true) {
@@ -36,6 +36,7 @@ class AuthController extends GetxController {
             position: const ToastPosition(align: Alignment.bottomCenter),
             backgroundColor: const Color(0xff00AA13));
       } else if (auth.emailVerified == false) {
+        isLogin.value = false;
         dialogEmail(context);
       }
     } else {

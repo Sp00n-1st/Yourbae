@@ -1,4 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,15 +13,24 @@ import 'package:yourbae_project/view/flash_sale_page.dart';
 import 'package:yourbae_project/view/search_page.dart';
 
 import '../controller/controller.dart';
+import '../model/user.dart';
 
 class Home extends StatelessWidget {
-  final Color navigationBarColor = Colors.white;
-  PageController? pageController;
-  var controller = Get.put(Controller());
-  var authC = Get.put(AuthController());
-
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(Controller());
+    var authController = Get.put(AuthController());
+    final auth = FirebaseAuth.instance.currentUser!.uid;
+    PageController? pageController;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentReference<UserAccount> users = firestore
+        .collection('user')
+        .doc(auth)
+        .withConverter<UserAccount>(
+            fromFirestore: (snapshot, _) =>
+                UserAccount.fromJson(snapshot.data()),
+            toFirestore: (users, _) => users.toJson());
+
     pageController = PageController();
     final iconList = <IconData>[
       CupertinoIcons.house_fill,
@@ -45,7 +56,19 @@ class Home extends StatelessWidget {
                   BoxDecoration(borderRadius: BorderRadius.circular(50.r)),
               child: GestureDetector(
                   onTap: () {
-                    Get.to(Profil());
+                    Get.to(StreamBuilder(
+                        stream: users.snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            authController.logoutAuth(false);
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return Profil(userAccount: snapshot.data!.data()!);
+                        }));
                   },
                   child: Hero(
                       tag: 'ass',

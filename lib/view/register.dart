@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:yourbae_project/controller/auth_controller.dart';
 import 'package:yourbae_project/controller/controller.dart';
@@ -21,7 +22,10 @@ class Register extends StatelessWidget {
     var createUserController = Get.put(CreateUserController());
     var authController = Get.put(AuthController());
     var controller = Get.put(Controller());
-    TextEditingController firstNameController = TextEditingController();
+    String nomorHP = '';
+    String kodeNegara = '';
+    String kodeNomorNegara = '';
+    TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     return Scaffold(
@@ -41,24 +45,19 @@ class Register extends StatelessWidget {
                 () => Column(
                   children: [
                     SizedBox(
-                      height: 110.h,
+                      height: 50.h,
                     ),
                     SizedBox(
                       width: 241.w,
                       child: Column(
                         children: [
-                          Text(
-                            'Hello!',
-                            style: GoogleFonts.poppins(
-                                fontSize: 34.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          ),
                           SizedBox(
-                            height: 13.h,
+                            width: 150.w,
+                            height: 150.h,
+                            child: Image.asset('assets/logo.png'),
                           ),
                           Text(
-                            'Want Premium Shoes?Create Account',
+                            'Register Yourbae',
                             softWrap: true,
                             maxLines: 2,
                             textAlign: TextAlign.center,
@@ -71,11 +70,11 @@ class Register extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 66.h,
+                      height: 20.h,
                     ),
                     InputBox(
-                      textController: firstNameController,
-                      hintText: 'Enter Your Name',
+                      textController: nameController,
+                      hintText: 'Masukkan Nama',
                       isPassword: false,
                     ),
                     SizedBox(
@@ -83,25 +82,68 @@ class Register extends StatelessWidget {
                     ),
                     InputBox(
                       textController: emailController,
-                      hintText: 'Enter Email',
+                      hintText: 'Masukkan Email',
                       isPassword: false,
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Container(
+                      width: 277.w,
+                      height: 60.h,
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0).r,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 2, color: const Color(0xffBCD1D8)),
+                          color: const Color(0xffD9D9D9),
+                          borderRadius: BorderRadius.circular(15).r),
+                      child: Center(
+                        child: IntlPhoneField(
+                          autovalidateMode: AutovalidateMode.disabled,
+                          disableLengthCheck: true,
+                          cursorHeight: 20.h,
+                          cursorColor: Colors.blueGrey,
+                          decoration: InputDecoration(
+                            hintText: 'Masukkan Nomor HP',
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.transparent),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(15).r,
+                            ),
+                          ),
+                          onChanged: (phone) {
+                            nomorHP = phone.number;
+                            kodeNomorNegara = phone.countryCode;
+                            kodeNegara = phone.countryISOCode;
+                          },
+                          onCountryChanged: (country) {
+                            print(country.code);
+                            print('Country changed to: ' + country.name);
+                          },
+                        ),
+                      ),
                     ),
                     SizedBox(
                       height: 20.h,
                     ),
                     InputBox(
                       textController: passwordController,
-                      hintText: 'Password',
+                      hintText: 'Masukkan Password',
                       isPassword: true,
                     ),
                     SizedBox(
-                      height: 39.h,
+                      height: 20.h,
                     ),
                     createUserController.isLoading.value == false
                         ? CustomButtonAuth(
                             nameButton: 'Register',
                             fun: () async {
-                              if (firstNameController.text.isNotEmpty &&
+                              if (nameController.text.isNotEmpty &&
                                   emailController.text.isNotEmpty &&
                                   passwordController.text.isNotEmpty) {
                                 try {
@@ -110,17 +152,18 @@ class Register extends StatelessWidget {
                                       .createUserWithEmail(
                                           emailController.text,
                                           passwordController.text,
-                                          firstNameController.text,
+                                          nameController.text,
+                                          kodeNegara,
+                                          kodeNomorNegara,
+                                          nomorHP,
                                           null,
                                           null,
                                           context);
-                                  firstNameController.clear();
+                                  nameController.clear();
                                   emailController.clear();
                                   passwordController.clear();
-                                  createUserController.isLoading.value = false;
                                 } on FirebaseAuthException catch (e) {
-                                  authController.isLogin.value =
-                                      !authController.isLogin.value;
+                                  createUserController.isLoading.value = false;
                                   controller.showNotification(
                                       context, e.message.toString());
                                 }
@@ -129,13 +172,14 @@ class Register extends StatelessWidget {
                                     position: ToastPosition(
                                         align: Alignment.bottomCenter),
                                     backgroundColor: Colors.red);
+                                createUserController.isLoading.value = false;
                               }
                             },
                           )
                         : SizedBox(
                             width: 50.w,
                             height: 50.h,
-                            child: CircularProgressIndicator(
+                            child: const CircularProgressIndicator(
                               backgroundColor: Colors.white,
                               color: Colors.black,
                             ),
@@ -151,22 +195,16 @@ class Register extends StatelessWidget {
                           fit: BoxFit.contain,
                         ),
                         SizedBox(
-                          width: 6.w,
-                        ),
-                        SizedBox(
-                          height: 18.h,
-                          width: 126.w,
+                          height: 20.h,
+                          width: 200.w,
                           child: Text(
-                            'Or Register With',
+                            'Atau Register Dengan',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w300,
                                 color: Colors.white),
                           ),
-                        ),
-                        SizedBox(
-                          width: 6.w,
                         ),
                         Image.asset(
                           'assets/line2.png',
@@ -204,7 +242,7 @@ class Register extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Already a member?',
+                          'Sudah Register ?',
                           style: GoogleFonts.poppins(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,
@@ -212,10 +250,10 @@ class Register extends StatelessWidget {
                         ),
                         TextButton(
                             onPressed: () {
-                              Get.offAll(Login());
+                              Get.offAll(const Login());
                             },
                             child: Text(
-                              'Sign In Now',
+                              'Login Sekarang',
                               style: GoogleFonts.poppins(
                                   decoration: TextDecoration.underline,
                                   fontSize: 14.sp,
@@ -233,12 +271,12 @@ class Register extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(10, 42, 0, 0).r,
+            margin: const EdgeInsets.fromLTRB(10, 42, 0, 0).r,
             child: IconButton(
                 onPressed: () {
                   Get.back();
                 },
-                icon: Icon(
+                icon: const Icon(
                   CupertinoIcons.chevron_left,
                   color: Colors.white,
                   size: 30,

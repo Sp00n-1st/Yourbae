@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/view/login.dart';
@@ -13,31 +14,37 @@ class CreateUserController extends GetxController {
   Future<void> createUserWithEmail(
       String email,
       String password,
-      String firstName,
+      String name,
+      String kodeNegara,
+      String kodeNomorNegara,
+      String nomorHP,
       String? imageProfile,
       String? token,
       BuildContext context) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.createUserWithEmailAndPassword(email: email, password: password);
     await auth.currentUser!.sendEmailVerification();
-    await createUserToStorage(
-        email, auth.currentUser!.uid, firstName, imageProfile, token);
-    authController.isLogin.value = !authController.isLogin.value;
+    await createUserToStorage(email, auth.currentUser!.uid, name, kodeNegara,
+        kodeNomorNegara, nomorHP, imageProfile, token);
     showDialog(
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
           title: Text(
-            'Hooray You Have Successfully Registered',
+            'Register Sukses',
             style: GoogleFonts.poppins(),
           ),
           content: Column(
             children: [
               //#D8D8DC
-              Image.asset('assets/success7.gif'),
+              SizedBox(
+                  width: 100.w,
+                  height: 100.h,
+                  child: Image.asset('assets/emailSend.png')),
               Text(
-                'Now You Can Login Using The Account You Registered',
+                'Kami Telah Mengirimkan Email Verifikasi Ke Email Yang Telah Didaftarkan, Cek Inbox/Spam Pada Email Anda Sebelum Login',
                 style: GoogleFonts.poppins(),
+                textAlign: TextAlign.justify,
               )
             ],
           ),
@@ -46,7 +53,7 @@ class CreateUserController extends GetxController {
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pop(context);
-                Get.offAll(Login());
+                Get.offAll(const Login());
               },
               child: const Text('OK'),
             )
@@ -56,19 +63,30 @@ class CreateUserController extends GetxController {
     );
   }
 
-  Future<void> createUserToStorage(String email, String uid, String firstName,
-      String? imageProfile, String? token) async {
+  Future<void> createUserToStorage(
+      String email,
+      String uid,
+      String name,
+      String kodeNegara,
+      String kodeNomorNegara,
+      String nomorHP,
+      String? imageProfile,
+      String? token) async {
     bool isDisable = false;
     FirebaseFirestore firebase = FirebaseFirestore.instance;
     final userCreated = <String, dynamic>{
       'token': token,
       'isDisable': isDisable,
-      'firstName': firstName,
+      'name': name,
+      'kodeNegara': kodeNegara,
+      'kodeNomorNegara': kodeNomorNegara,
+      'nomorHP': nomorHP,
       'email': email,
       'imageProfile': imageProfile,
       'isLogin': null,
       'lastLogin': null
     };
     firebase.collection('user').doc(uid).set(userCreated);
+    isLoading.value = false;
   }
 }

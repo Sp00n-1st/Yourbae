@@ -45,23 +45,18 @@ class Login extends StatelessWidget {
                       width: 241.w,
                       child: Column(
                         children: [
-                          Text(
-                            'Hello Again!',
-                            style: GoogleFonts.poppins(
-                                fontSize: 34.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          ),
                           SizedBox(
-                            height: 13.h,
+                            width: 150.w,
+                            height: 150.h,
+                            child: Image.asset('assets/logo.png'),
                           ),
                           Text(
-                            'Welcome Back You’ve\nBeen Missed',
+                            'Selamat Datang Kembali!',
                             softWrap: true,
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
-                                fontSize: 18.sp,
+                                fontSize: 24.sp,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white),
                           )
@@ -69,11 +64,11 @@ class Login extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 66.h,
+                      height: 20.h,
                     ),
                     InputBox(
                         isPassword: false,
-                        hintText: 'Input Email',
+                        hintText: 'Masukkan Email',
                         textController: emailController),
                     SizedBox(
                       height: 20.h,
@@ -81,9 +76,9 @@ class Login extends StatelessWidget {
                     InputBox(
                         isPassword: true,
                         textController: password,
-                        hintText: 'Input Password'),
+                        hintText: 'Masukkan Password'),
                     SizedBox(
-                      height: 13.h,
+                      height: 10.h,
                     ),
                     Align(
                       alignment: Alignment.centerRight,
@@ -95,7 +90,7 @@ class Login extends StatelessWidget {
                                   !authController.isLogin.value;
                             },
                             child: Text(
-                              'Recover Password',
+                              'Reset Password',
                               style: GoogleFonts.poppins(
                                   decoration: TextDecoration.underline,
                                   fontSize: 15,
@@ -105,7 +100,7 @@ class Login extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 31.h,
+                      height: 20.h,
                     ),
                     authController.isLogin.value == true
                         ? SizedBox(
@@ -117,7 +112,7 @@ class Login extends StatelessWidget {
                             ),
                           )
                         : CustomButtonAuth(
-                            nameButton: 'Sign in',
+                            nameButton: 'Login',
                             fun: () async {
                               try {
                                 authController.isLogin.value =
@@ -146,10 +141,10 @@ class Login extends StatelessWidget {
                           width: 6.w,
                         ),
                         SizedBox(
-                          height: 18.h,
-                          width: 126.w,
+                          height: 20.h,
+                          width: 150.w,
                           child: Text(
-                            'Or Continue With',
+                            'Atau Lanjut Dengan',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                                 fontSize: 15.sp,
@@ -196,7 +191,7 @@ class Login extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Not a member?',
+                          'Belum Register?',
                           style: GoogleFonts.poppins(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,
@@ -207,7 +202,7 @@ class Login extends StatelessWidget {
                               Get.to(Register());
                             },
                             child: Text(
-                              'Register Now',
+                              'Register Sekarang',
                               style: GoogleFonts.poppins(
                                   decoration: TextDecoration.underline,
                                   fontSize: 14,

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/controller/auth_controller.dart';
+import 'package:yourbae_project/model/user.dart';
 import 'package:yourbae_project/view/login.dart';
 import 'package:yourbae_project/view/edit_profile_page.dart';
 import 'package:yourbae_project/view/input_alamat.dart';
@@ -11,6 +12,8 @@ import 'package:yourbae_project/view/input_alamat.dart';
 import '../view_model/menu_profile.dart';
 
 class Profil extends StatelessWidget {
+  Profil({super.key, required this.userAccount});
+  UserAccount userAccount;
   @override
   Widget build(BuildContext context) {
     var authController = Get.put(AuthController());
@@ -23,7 +26,7 @@ class Profil extends StatelessWidget {
               onPressed: () {
                 Get.back();
               },
-              icon: Icon(CupertinoIcons.back)),
+              icon: const Icon(CupertinoIcons.back)),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -45,7 +48,7 @@ class Profil extends StatelessWidget {
                     child: SizedBox(
                       width: 198.w,
                       child: Text(
-                        'Kanna Hashimoto',
+                        userAccount.name,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w500, fontSize: 24.sp),
@@ -61,8 +64,7 @@ class Profil extends StatelessWidget {
                     fun: () {
                       Get.to(
                           EditProfilePage(
-                            firstName: 'Kanna',
-                            lastName: 'Hashimoto',
+                            userAccount: userAccount,
                           ),
                           transition: Transition.leftToRightWithFade);
                     },
@@ -100,7 +102,7 @@ class Profil extends StatelessWidget {
                           context: context,
                           builder: (context) {
                             return CupertinoAlertDialog(
-                              title: Text('Anda Yakin Ingin Logout ?'),
+                              title: const Text('Anda Yakin Ingin Logout ?'),
                               content: Container(
                                 margin: EdgeInsets.fromLTRB(0, 10.r, 0, 0),
                                 width: 100.w,
@@ -134,7 +136,7 @@ class Profil extends StatelessWidget {
                       child: Text(
                         'Sign Out',
                         style: GoogleFonts.poppins(
-                            color: Color(0xffFF434A),
+                            color: const Color(0xffFF434A),
                             fontSize: 19,
                             fontWeight: FontWeight.w300),
                       ))
@@ -148,15 +150,21 @@ class Profil extends StatelessWidget {
                 width: 154.w,
                 height: 154.h,
                 decoration: BoxDecoration(
-                    border: Border.all(width: 5, color: Color(0xff587179)),
+                    color: Colors.white,
+                    border:
+                        Border.all(width: 5, color: const Color(0xff587179)),
                     borderRadius: BorderRadius.circular(17.sp)),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(17.sp),
-                  child: Image.asset(
-                    'assets/kanna.jpeg',
-                    fit: BoxFit.fill,
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(10.sp),
+                    child: userAccount.imageProfile == null
+                        ? Image.network(
+                            'https://www.its.ac.id/aktuaria/wp-content/uploads/sites/100/2018/03/user-320x320.png',
+                            fit: BoxFit.fill,
+                          )
+                        : Image.network(
+                            userAccount.imageProfile!,
+                            fit: BoxFit.fill,
+                          )),
               ),
             ),
           ],
