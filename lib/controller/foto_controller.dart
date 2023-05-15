@@ -8,17 +8,17 @@ import 'package:oktoast/oktoast.dart';
 import 'package:uuid/uuid.dart';
 
 class PhotoController extends GetxController {
-  final auth = FirebaseAuth.instance.currentUser!.uid;
   List<Widget> itemPhotosWidgetList = <Widget>[];
-  final ImagePicker _picker = ImagePicker();
   XFile? photo;
   XFile? itemImagesList;
+  final auth = FirebaseAuth.instance.currentUser!.uid;
+  final ImagePicker _picker = ImagePicker();
   var downloadUrl = ''.obs;
   var uploading = false.obs;
   var pathImage = ''.obs;
 
-  pickPhotoFromGallery() async {
-    photo = await _picker.pickImage(source: ImageSource.gallery);
+  pickPhotoFromGallery(ImageSource? source) async {
+    photo = await _picker.pickImage(source: source!);
     if (photo != null) {
       itemImagesList = photo!;
       pathImage.value = photo!.path;

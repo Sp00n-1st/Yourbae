@@ -1,7 +1,7 @@
 class Product {
   final String nameProduct, descItem, category, imageUrl;
 
-  final num price, size37, size38, size39, size40, size41, size42;
+  final int price, size37, size38, size39, size40, size41, size42;
 
   Product(
       {required this.nameProduct,
@@ -22,13 +22,13 @@ class Product {
           category: json['category'] as String,
           imageUrl: json['imageUrl'] as String,
           descItem: json['descItem'] as String,
-          price: json['price'] as num,
-          size37: json['size37'] as num,
-          size38: json['size38'] as num,
-          size39: json['size39'] as num,
-          size40: json['size40'] as num,
-          size41: json['size41'] as num,
-          size42: json['size42'] as num,
+          price: json['price'] as int,
+          size37: json['size37'] as int,
+          size38: json['size38'] as int,
+          size39: json['size39'] as int,
+          size40: json['size40'] as int,
+          size41: json['size41'] as int,
+          size42: json['size42'] as int,
         );
 
   Map<String, Object?> toJson() {

@@ -42,6 +42,7 @@ class Home extends StatelessWidget {
     final bool showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.grey.shade200,
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,

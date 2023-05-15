@@ -6,7 +6,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:yourbae_project/controller/edit_controller.dart';
 import 'package:yourbae_project/controller/foto_controller.dart';
 import 'package:yourbae_project/model/user.dart';
@@ -17,11 +19,12 @@ class EditProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController name = TextEditingController(text: userAccount.name);
+    var name = TextEditingController(text: userAccount.name).obs;
     TextEditingController nomorHP =
         TextEditingController(text: userAccount.nomorHP);
     String kodeNegara = userAccount.kodeNegara;
     String kodeNomorNegara = userAccount.kodeNomorNegara;
+    var isEmpty = false.obs;
     var validNumber = true.obs;
     var control = false.obs;
     var photoController = Get.put(PhotoController());
@@ -57,7 +60,85 @@ class EditProfilePage extends StatelessWidget {
               ),
               Center(
                 child: GestureDetector(
-                  onTap: photoController.pickPhotoFromGallery,
+                  // onTap: photoController.pickPhotoFromGallery,
+                  onTap: () {
+                    print('data');
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          width: double.infinity,
+                          height: 100.h,
+                          padding: EdgeInsets.fromLTRB(20, 10, 0, 0).r,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.r),
+                                topRight: Radius.circular(20.r),
+                              )),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: 40.h,
+                                child: MaterialButton(
+                                  onPressed: () async {
+                                    print('Camera');
+                                    Navigator.pop(context);
+                                    await photoController.pickPhotoFromGallery(
+                                        ImageSource.camera);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.camera,
+                                        size: 30.r,
+                                      ),
+                                      SizedBox(
+                                        width: 10.w,
+                                      ),
+                                      Text(
+                                        'Ambil dari Kamera',
+                                        style: GoogleFonts.poppins(),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                height: 40.h,
+                                child: MaterialButton(
+                                  onPressed: () async {
+                                    print('Gallerry');
+                                    Navigator.pop(context);
+                                    await photoController.pickPhotoFromGallery(
+                                        ImageSource.gallery);
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.image,
+                                        size: 30.r,
+                                      ),
+                                      SizedBox(
+                                        width: 10.w,
+                                      ),
+                                      Text(
+                                        'Ambil dari Gallery',
+                                        style: GoogleFonts.poppins(),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
                   child: (photoController.pathImage.value != '')
                       ? CircleAvatar(
                           radius: 100,
@@ -82,7 +163,7 @@ class EditProfilePage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 20, right: 20).r,
                 child: TextFormField(
                   style: GoogleFonts.poppins(),
-                  controller: name,
+                  controller: name.value,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     errorStyle:
@@ -97,8 +178,16 @@ class EditProfilePage extends StatelessWidget {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
+                      Future.delayed(Duration(milliseconds: 50), () {
+                        isEmpty.value = true;
+                      });
                       return 'Nama Tidak Boleh Kosong!';
+                    } else {
+                      Future.delayed(Duration(milliseconds: 50), () {
+                        isEmpty.value = false;
+                      });
                     }
+
                     return null;
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -176,22 +265,34 @@ class EditProfilePage extends StatelessWidget {
                   child: ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(shape: const StadiumBorder()),
-                    onPressed: editController.isLoading.value == true
+                    onPressed: editController.isLoading.value == true ||
+                            isEmpty.value == true ||
+                            control.value == true
                         ? null
                         : () async {
-                            editController.isLoading.value = true;
-                            await editController.editUser(
-                                userAccount,
-                                name.text,
-                                kodeNegara,
-                                kodeNomorNegara,
-                                nomorHP.text);
+                            if (name.value.text.isNotEmpty &&
+                                nomorHP.text.isNotEmpty &&
+                                kodeNegara.isNotEmpty &&
+                                kodeNomorNegara.isNotEmpty) {
+                              print('object');
+                              editController.isLoading.value = true;
+                              await editController.editUser(
+                                  userAccount,
+                                  name.value.text,
+                                  kodeNegara,
+                                  kodeNomorNegara,
+                                  nomorHP.text);
+                            } else {
+                              showToast('Harap Isi Semua Kolom Data',
+                                  position: const ToastPosition(
+                                      align: Alignment.bottomCenter));
+                            }
                           },
                     child: editController.isLoading.value == true
                         ? SizedBox(
                             width: 30.w,
                             height: 30.h,
-                            child: CircularProgressIndicator(
+                            child: const CircularProgressIndicator(
                               color: Colors.black,
                               backgroundColor: Colors.white,
                             ))

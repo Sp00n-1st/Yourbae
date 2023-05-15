@@ -7,15 +7,21 @@ import 'package:intl/intl.dart';
 import '../view/product_detail.dart';
 
 class SingleProduct extends StatelessWidget {
-  SingleProduct({Key? key, required this.product}) : super(key: key);
+  SingleProduct({Key? key, required this.product, required this.id})
+      : super(key: key);
 
   Product product;
+  String id;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(ProductDetail(product: product),
+        Get.to(
+            ProductDetail(
+              product: product,
+              id: id,
+            ),
             transition: Transition.leftToRightWithFade);
       },
       child: Column(

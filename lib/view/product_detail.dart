@@ -1,17 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:yourbae_project/controller/controller.dart';
 import 'package:yourbae_project/model/product_model.dart';
 import 'package:intl/intl.dart';
+import 'package:yourbae_project/view/home.dart';
+
+import '../model/cart.dart';
 
 class ProductDetail extends StatefulWidget {
   @override
   _ProductDetailState createState() => _ProductDetailState();
-  ProductDetail({super.key, required this.product});
+  ProductDetail({super.key, required this.product, required this.id});
   Product product;
+  String id;
 }
 
 class _ProductDetailState extends State<ProductDetail>
@@ -32,10 +39,12 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   Widget build(BuildContext context) {
+    final auth = FirebaseAuth.instance.currentUser!.uid;
     var controller = Get.put(Controller());
-    controller.selectedSize.value = 0;
-    var qty = 0.obs;
+    var qty = 1.obs;
     var stok = 0.obs;
+    var subTotal = (qty.value * widget.product.price).obs;
+    controller.selectedSize.value = 0;
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -45,7 +54,7 @@ class _ProductDetailState extends State<ProductDetail>
           onPressed: () {
             Get.back();
           },
-          icon: Icon(
+          icon: const Icon(
             CupertinoIcons.back,
           ),
         ),
@@ -69,7 +78,7 @@ class _ProductDetailState extends State<ProductDetail>
                 height: 80.h,
               ),
               Container(
-                padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                 width: double.infinity,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -80,8 +89,11 @@ class _ProductDetailState extends State<ProductDetail>
                   children: [
                     Text(
                       widget.product.nameProduct,
+                      maxLines: 2,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
-                          fontSize: 42, fontWeight: FontWeight.w500),
+                          fontSize: 24, fontWeight: FontWeight.w500),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,9 +106,9 @@ class _ProductDetailState extends State<ProductDetail>
                               () => Text(
                                 '$qty Pair',
                                 style: GoogleFonts.poppins(
-                                    fontSize: 28,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xff575757)),
+                                    color: const Color(0xff575757)),
                               ),
                             ),
                             Row(
@@ -115,12 +127,14 @@ class _ProductDetailState extends State<ProductDetail>
                                       children: [
                                         IconButton(
                                             onPressed: () {
-                                              if (qty.value == 0) {
+                                              if (qty.value == 1) {
                                               } else {
                                                 qty.value--;
+                                                subTotal.value = qty.value *
+                                                    widget.product.price;
                                               }
                                             },
-                                            icon: Icon(
+                                            icon: const Icon(
                                               CupertinoIcons.minus,
                                               color: Colors.white,
                                               size: 15,
@@ -130,7 +144,7 @@ class _ProductDetailState extends State<ProductDetail>
                                             qty.value.toString(),
                                             style: GoogleFonts.exo(
                                                 color: Colors.white,
-                                                fontSize: 20.sp,
+                                                fontSize: 16.sp,
                                                 fontWeight: FontWeight.w800),
                                           ),
                                         ),
@@ -139,9 +153,11 @@ class _ProductDetailState extends State<ProductDetail>
                                               if (stok.value == qty.value) {
                                               } else {
                                                 qty.value++;
+                                                subTotal.value = qty.value *
+                                                    widget.product.price;
                                               }
                                             },
-                                            icon: Icon(
+                                            icon: const Icon(
                                               CupertinoIcons.plus,
                                               color: Colors.white,
                                               size: 15,
@@ -155,12 +171,15 @@ class _ProductDetailState extends State<ProductDetail>
                             SizedBox(
                               height: 10.h,
                             ),
-                            Text(
-                              NumberFormat.currency(
-                                      locale: 'id', symbol: 'Rp. ')
-                                  .format(widget.product.price),
-                              style: GoogleFonts.exo(
-                                  fontSize: 22.sp, fontWeight: FontWeight.w500),
+                            Obx(
+                              () => Text(
+                                NumberFormat.currency(
+                                        locale: 'id', symbol: 'Rp. ')
+                                    .format(qty.value * widget.product.price),
+                                style: GoogleFonts.exo(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
                             ),
                           ],
                         ),
@@ -177,8 +196,49 @@ class _ProductDetailState extends State<ProductDetail>
                                               color: Color(0xffbcd1d8)),
                                           borderRadius:
                                               BorderRadius.circular(15).r),
-                                      backgroundColor: Color(0xff156897)),
-                                  onPressed: () {},
+                                      backgroundColor: const Color(0xff156897)),
+                                  onPressed: () async {
+                                    if (controller.selectedSize.value == 0) {
+                                      showToast(
+                                          'Pilih Size Sebelum Menambahkan Item Ke Keranjang',
+                                          textStyle: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w500),
+                                          position: const ToastPosition(
+                                              align: Alignment.bottomCenter));
+                                    } else {
+                                      await FirebaseFirestore.instance
+                                          .collection('cart')
+                                          .doc(auth)
+                                          .withConverter<CartModel>(
+                                              fromFirestore: (snapshot, _) =>
+                                                  CartModel.fromJson(
+                                                      snapshot.data()),
+                                              toFirestore: (cartModel, _) =>
+                                                  cartModel.toJson())
+                                          .get()
+                                          .then((DocumentSnapshot<CartModel>
+                                              documentSnapshot) {
+                                        if (documentSnapshot.exists) {
+                                          return add(
+                                              documentSnapshot.data(),
+                                              subTotal.value,
+                                              qty.value,
+                                              controller.selectedSize.value,
+                                              widget.id,
+                                              auth,
+                                              context);
+                                        } else {
+                                          return addFirst(
+                                              subTotal.value,
+                                              qty.value,
+                                              widget.id,
+                                              controller.selectedSize.value,
+                                              auth,
+                                              context);
+                                        }
+                                      });
+                                    }
+                                  },
                                   child: Text(
                                     '+ Keranjang',
                                     style: GoogleFonts.poppins(
@@ -200,7 +260,7 @@ class _ProductDetailState extends State<ProductDetail>
                                               color: Color(0xffbcd1d8)),
                                           borderRadius:
                                               BorderRadius.circular(15).r),
-                                      backgroundColor: Color(0xff156897)),
+                                      backgroundColor: const Color(0xff156897)),
                                   onPressed: () {
                                     showDialog(
                                       context: context,
@@ -309,6 +369,7 @@ class _ProductDetailState extends State<ProductDetail>
                                           actions: [
                                             TextButton(
                                                 onPressed: () {
+                                                  qty.value = 1;
                                                   Navigator.pop(context);
                                                 },
                                                 child: Text(
@@ -436,4 +497,136 @@ class TabSize extends StatelessWidget {
               )),
         ));
   }
+}
+
+add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
+    String auth, BuildContext context) async {
+  String uidUser = cartModel!.uidUser;
+  String timeStorage = cartModel.time;
+  List<String> idProductStorage = cartModel.idProduct;
+  List<int> qtyStorage = cartModel.qty;
+  List<int> sizeStorage = cartModel.size;
+  List<num> subTotalStorage = cartModel.subTotal;
+  bool isCheckout = cartModel.isCheckout;
+  bool isPay = cartModel.isPay;
+  if (sizeStorage.contains(size)) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('Item Sudah Ada Dikeranjang!'),
+          content: Column(
+            children: [
+              const Icon(
+                CupertinoIcons.xmark_circle,
+                size: 70,
+                color: Colors.red,
+              ),
+              const Text(
+                  'Item Tidak Bisa Ditambahkan Ke Keranjang Karena Sudah Ada Di Keranjang'),
+            ],
+          ),
+          actions: [
+            MaterialButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            )
+          ],
+        );
+      },
+    );
+  } else {
+    idProductStorage.add(idProduct);
+    qtyStorage.add(qty);
+    subTotalStorage.add(subTotal);
+    sizeStorage.add(size);
+
+    await addToStorage(uidUser, timeStorage, idProductStorage, qtyStorage,
+        sizeStorage, subTotalStorage, isCheckout, isPay, auth);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('Item Sudah Ditambahkan Ke Keranjang'),
+          content: const Icon(
+            CupertinoIcons.cart_badge_plus,
+            size: 70,
+          ),
+          actions: [
+            MaterialButton(
+              onPressed: () {
+                Get.offAll(Home());
+              },
+              child: const Text('OK'),
+            )
+          ],
+        );
+      },
+    );
+  }
+}
+
+addFirst(num subTotal, num qty, String idProduct, int size, String auth,
+    BuildContext context) async {
+  List<String> idProductStorage = <String>[idProduct];
+  List<num> qtyStorage = <num>[qty];
+  List<num> subTotalStorage = <num>[subTotal];
+  List<int> sizeStorage = <int>[size];
+  final now = DateTime.now();
+  final date = DateFormat('yyyyMMddHHmmss').format(now);
+
+  await FirebaseFirestore.instance.collection('cart').doc(auth).set(({
+        'uidUser': auth,
+        'time': date,
+        'idProduct': idProductStorage,
+        'qty': qtyStorage,
+        'size': sizeStorage,
+        'subTotal': subTotalStorage,
+        'isCheckout': false,
+        'isPay': false
+      }));
+  showDialog(
+    context: context,
+    builder: (context) {
+      return CupertinoAlertDialog(
+        title: const Text('Item Sudah Ditambahkan Ke Keranjang'),
+        content: const Icon(
+          CupertinoIcons.cart_badge_plus,
+          size: 70,
+        ),
+        actions: [
+          MaterialButton(
+            onPressed: () {
+              Get.offAll(Home());
+            },
+            child: const Text('OK'),
+          )
+        ],
+      );
+    },
+  );
+}
+
+addToStorage(
+    String uidUser,
+    String timeStorage,
+    List<String> idProductStorage,
+    List<int> qtyStorage,
+    List<int> sizeStorage,
+    List<num> subTotalStorage,
+    bool isCheckout,
+    bool isPay,
+    String auth) async {
+  await FirebaseFirestore.instance.collection('cart').doc(auth).set(({
+        'uidUser': uidUser,
+        'time': timeStorage,
+        'idProduct': idProductStorage,
+        'qty': qtyStorage,
+        'size': sizeStorage,
+        'subTotal': subTotalStorage,
+        'isCheckout': isCheckout,
+        'isPay': isPay,
+      }));
 }

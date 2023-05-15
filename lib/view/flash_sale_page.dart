@@ -5,6 +5,7 @@ class FlashSalePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -16,7 +17,7 @@ class FlashSalePage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Image.asset('assets/nodata6.gif'),
+        child: Image.asset('assets/nodata3.gif'),
       ),
     );
   }
