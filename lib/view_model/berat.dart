@@ -1,9 +1,9 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/home_controller.dart';
+import '../controller/alamat_controller.dart';
 
-class BeratBarang extends GetView<HomeController> {
+class BeratBarang extends GetView<AlamatController> {
   const BeratBarang({Key? key}) : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class BeratBarang extends GetView<HomeController> {
                 hintText: "Berat Barang",
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => controller.ubahBerat(value),
+              // onChanged: (value) => controller.ubahBerat(value),
             ),
           ),
           SizedBox(width: 10),
@@ -52,7 +52,7 @@ class BeratBarang extends GetView<HomeController> {
               ],
               label: "Satuan",
               selectedItem: "gram",
-              onChanged: (value) => controller.ubahSatuan(value!),
+              // onChanged: (value) => controller.ubahSatuan(value!),
             ),
           ),
         ],

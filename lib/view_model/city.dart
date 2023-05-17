@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../controller/home_controller.dart';
+import '../controller/alamat_controller.dart';
 import '../model/city_model.dart';
 
-class Kota extends GetView<HomeController> {
+class Kota extends GetView<AlamatController> {
   const Kota({
     Key? key,
     required this.provId,

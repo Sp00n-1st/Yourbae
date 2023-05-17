@@ -138,12 +138,28 @@ class SingleCart extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 10.w,
+            width: 5.w,
           ),
-          Text(
-            cartModel.qty[index].toString(),
-            style:
-                GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 24),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Qty',
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500, fontSize: 12)),
+              Text(
+                cartModel.qty[index].toString(),
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500, fontSize: 18),
+              ),
+              Text('Size',
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500, fontSize: 12)),
+              Text(
+                cartModel.size[index].toString(),
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500, fontSize: 18),
+              ),
+            ],
           )
         ],
       ),

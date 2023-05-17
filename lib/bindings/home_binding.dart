@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 import 'package:yourbae_project/controller/controller.dart';
 
-import '../controller/home_controller.dart';
+import '../controller/alamat_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HomeController>(
-      () => HomeController(),
+    Get.lazyPut<AlamatController>(
+      () => AlamatController(),
     );
   }
 }
