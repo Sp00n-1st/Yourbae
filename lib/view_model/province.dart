@@ -15,6 +15,7 @@ class Provinsi extends GetView<AlamatController> {
 
   @override
   Widget build(BuildContext context) {
+    var alamatController = Get.put(AlamatController());
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: DropdownSearch<Province>(
@@ -23,17 +24,33 @@ class Provinsi extends GetView<AlamatController> {
         onFind: controller.getDataAddress,
         onChanged: (prov) {
           if (prov != null) {
-            controller.hiddenKotaTujuan.value = false;
+            alamatController.hiddenKotaTujuan.value = true;
+            alamatController.kurir.value = '';
+            alamatController.cost.value = 0;
+            alamatController.namaProvinsi.value = prov.province!;
+            Future.delayed(
+              Duration(milliseconds: 10),
+              () {
+                alamatController.hiddenKotaTujuan.value = false;
+                alamatController.hiddenRadio.value = true;
+              },
+            );
             controller.provTujuanId.value = int.parse(prov.provinceId!);
           } else {
             controller.hiddenKotaTujuan.value = true;
             controller.provTujuanId.value = 0;
+            alamatController.hiddenKotaTujuan.value = true;
+            alamatController.hiddenRadio.value = true;
+            alamatController.kurir.value = '';
+            alamatController.cost.value = 0;
+            controller.kotaTujuanId.value = 0;
           }
+
           controller.showButton();
         },
         showSearchBox: true,
         searchBoxDecoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             vertical: 10,
             horizontal: 25,
           ),
@@ -44,10 +61,10 @@ class Provinsi extends GetView<AlamatController> {
         ),
         popupItemBuilder: (context, item, isSelected) {
           return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Text(
               "${item.province}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
               ),
             ),

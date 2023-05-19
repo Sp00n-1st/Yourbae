@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:yourbae_project/model/cart.dart';
+import 'package:yourbae_project/model/cart_model.dart';
 import 'package:yourbae_project/model/product_model.dart';
 import 'package:intl/intl.dart';
 
@@ -13,11 +13,13 @@ class SingleCart extends StatelessWidget {
       {Key? key,
       required this.product,
       required this.cartModel,
-      required this.index})
+      required this.index,
+      required this.isShowDelete})
       : super(key: key);
   Product product;
   CartModel cartModel;
   int index;
+  bool isShowDelete;
   @override
   Widget build(BuildContext context) {
     final firebase = FirebaseFirestore.instance;
@@ -68,72 +70,75 @@ class SingleCart extends StatelessWidget {
                 SizedBox(
                   height: 10.h,
                 ),
-                Center(
-                  child: SizedBox(
-                    width: 60.w,
-                    height: 30.h,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: const StadiumBorder()),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return CupertinoAlertDialog(
-                                title: Text(
-                                  'Hapus Item ?',
-                                  style: GoogleFonts.poppins(),
-                                ),
-                                content: Column(
-                                  children: [
-                                    const Icon(
-                                      CupertinoIcons.delete,
-                                      size: 70,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      'Apa Anda Yakin Ingin Menghapus ${product.nameProduct} Dari Keranjang ?',
-                                      style: GoogleFonts.poppins(),
-                                    )
-                                  ],
-                                ),
-                                actions: [
-                                  MaterialButton(
-                                    onPressed: () {
-                                      cartModel.idProduct.removeAt(index);
-                                      cartModel.subTotal.removeAt(index);
-                                      cartModel.qty.removeAt(index);
-                                      cartModel.size.removeAt(index);
-                                      cart.update(({
-                                        'idProduct': cartModel.idProduct,
-                                        'qty': cartModel.qty,
-                                        'subTotal': cartModel.subTotal,
-                                        'size': cartModel.size
-                                      }));
-                                      showToast('Item Berhasil Di Hapus',
-                                          position: const ToastPosition(
-                                              align: Alignment.bottomCenter));
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Ya'),
-                                  ),
-                                  MaterialButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Tidak'),
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        child: const Icon(Icons.delete)),
-                  ),
-                )
+                isShowDelete == true
+                    ? Center(
+                        child: SizedBox(
+                          width: 60.w,
+                          height: 30.h,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  shape: const StadiumBorder()),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return CupertinoAlertDialog(
+                                      title: Text(
+                                        'Hapus Item ?',
+                                        style: GoogleFonts.poppins(),
+                                      ),
+                                      content: Column(
+                                        children: [
+                                          const Icon(
+                                            CupertinoIcons.delete,
+                                            size: 70,
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'Apa Anda Yakin Ingin Menghapus ${product.nameProduct} Dari Keranjang ?',
+                                            style: GoogleFonts.poppins(),
+                                          )
+                                        ],
+                                      ),
+                                      actions: [
+                                        MaterialButton(
+                                          onPressed: () {
+                                            cartModel.idProduct.removeAt(index);
+                                            cartModel.subTotal.removeAt(index);
+                                            cartModel.qty.removeAt(index);
+                                            cartModel.size.removeAt(index);
+                                            cart.update(({
+                                              'idProduct': cartModel.idProduct,
+                                              'qty': cartModel.qty,
+                                              'subTotal': cartModel.subTotal,
+                                              'size': cartModel.size
+                                            }));
+                                            showToast('Item Berhasil Di Hapus',
+                                                position: const ToastPosition(
+                                                    align: Alignment
+                                                        .bottomCenter));
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Ya'),
+                                        ),
+                                        MaterialButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Tidak'),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: const Icon(Icons.delete)),
+                        ),
+                      )
+                    : SizedBox()
               ],
             ),
           ),

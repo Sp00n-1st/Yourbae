@@ -11,7 +11,7 @@ import 'package:yourbae_project/model/product_model.dart';
 import 'package:intl/intl.dart';
 import 'package:yourbae_project/view/home.dart';
 
-import '../model/cart.dart';
+import '../model/cart_model.dart';
 
 class ProductDetail extends StatefulWidget {
   @override
@@ -502,7 +502,7 @@ class TabSize extends StatelessWidget {
 add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
     String auth, BuildContext context) async {
   String uidUser = cartModel!.uidUser;
-  String timeStorage = cartModel.time;
+  int timeStorage = cartModel.time;
   List<String> idProductStorage = cartModel.idProduct;
   List<int> qtyStorage = cartModel.qty;
   List<int> sizeStorage = cartModel.size;
@@ -611,7 +611,7 @@ addFirst(num subTotal, num qty, String idProduct, int size, String auth,
 
 addToStorage(
     String uidUser,
-    String timeStorage,
+    int timeStorage,
     List<String> idProductStorage,
     List<int> qtyStorage,
     List<int> sizeStorage,

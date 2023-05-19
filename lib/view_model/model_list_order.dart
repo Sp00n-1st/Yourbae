@@ -3,30 +3,29 @@
 // import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:intl/intl.dart';
-// import '../model/order.dart';
+// import '../model/order_model.dart';
 
 // // ignore: must_be_immutable
 // class ModelListOrder extends StatelessWidget {
 //   String nameProduct;
 //   List<dynamic> imageUrl;
 //   int qty, index;
-//   num price, subTotal, total, discount;
-//   // OrderModel? cartModel;
+//   num subTotal;
+//   OrderModel? orderModel;
 //   ModelListOrder(
 //       {required this.nameProduct,
 //       required this.imageUrl,
 //       required this.qty,
-//       required this.price,
 //       required this.subTotal,
-//       required this.total,
-//       required this.discount,
-//       // required this.cartModel,
+//       required this.orderModel,
 //       required this.index});
 //   @override
 //   Widget build(BuildContext context) {
 //     double sizeWidth = MediaQuery.of(context).size.width;
 //     final firebase = FirebaseFirestore.instance;
-//     // final cartRef = firebase.collection('cart').doc(cartModel!.uidUser);
+//     final order = firebase
+//         .collection('order')
+//         .where('uidUser', isEqualTo: orderModel!.uidUser);
 //     return Container(
 //       padding: EdgeInsets.all(10),
 //       margin: EdgeInsets.only(top: 20),
@@ -56,23 +55,23 @@
 //                 child: Row(
 //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                   children: [
-//                     Text('Qty', style: GoogleFonts.poppins(fontSize: 12)),
+//                     Text('QQQ', style: GoogleFonts.poppins(fontSize: 12)),
 //                     Text('$qty Pcs', style: GoogleFonts.poppins(fontSize: 12))
 //                   ],
 //                 ),
 //               ),
-//               SizedBox(
-//                 width: sizeWidth / 3,
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Text('Price', style: GoogleFonts.poppins(fontSize: 12)),
-//                     Text(
-//                         '£ ${NumberFormat.currency(locale: 'en', symbol: '').format(price)} ',
-//                         style: GoogleFonts.poppins(fontSize: 12))
-//                   ],
-//                 ),
-//               ),
+//               // SizedBox(
+//               //   width: sizeWidth / 3,
+//               //   child: Row(
+//               //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               //     children: [
+//               //       Text('Price', style: GoogleFonts.poppins(fontSize: 12)),
+//               //       Text(
+//               //           '£ ${NumberFormat.currency(locale: 'en', symbol: '').format(price)} ',
+//               //           style: GoogleFonts.poppins(fontSize: 12))
+//               //     ],
+//               //   ),
+//               // ),
 //               SizedBox(
 //                 width: sizeWidth / 3,
 //                 child: Row(
@@ -86,30 +85,30 @@
 //                   ],
 //                 ),
 //               ),
-//               SizedBox(
-//                 width: sizeWidth / 3,
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Text('Discount', style: GoogleFonts.poppins(fontSize: 12)),
-//                     Text(
-//                         '£ ${NumberFormat.currency(locale: 'en', symbol: '').format(discount)}',
-//                         style: GoogleFonts.poppins(fontSize: 12))
-//                   ],
-//                 ),
-//               ),
-//               SizedBox(
-//                 width: sizeWidth / 3,
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                   children: [
-//                     Text('Total', style: GoogleFonts.poppins(fontSize: 12)),
-//                     Text(
-//                         '£ ${NumberFormat.currency(locale: 'en', symbol: '').format(total)}',
-//                         style: GoogleFonts.poppins(fontSize: 12))
-//                   ],
-//                 ),
-//               ),
+//               // SizedBox(
+//               //   width: sizeWidth / 3,
+//               //   child: Row(
+//               //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               //     children: [
+//               //       Text('Discount', style: GoogleFonts.poppins(fontSize: 12)),
+//               //       Text(
+//               //           '£ ${NumberFormat.currency(locale: 'en', symbol: '').format(discount)}',
+//               //           style: GoogleFonts.poppins(fontSize: 12))
+//               //     ],
+//               //   ),
+//               // ),
+//               // SizedBox(
+//               //   width: sizeWidth / 3,
+//               //   child: Row(
+//               //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               //     children: [
+//               //       Text('Total', style: GoogleFonts.poppins(fontSize: 12)),
+//               //       Text(
+//               //           '£ ${NumberFormat.currency(locale: 'en', symbol: '').format(total)}',
+//               //           style: GoogleFonts.poppins(fontSize: 12))
+//               //     ],
+//               //   ),
+//               // ),
 //               Container(
 //                 margin: EdgeInsets.only(top: 2),
 //                 height: 30,
@@ -138,21 +137,21 @@
 //                                 actions: [
 //                                   MaterialButton(
 //                                     onPressed: () {
-//                                       cartModel!.idProduct.removeAt(index);
-//                                       cartModel!.price.removeAt(index);
-//                                       cartModel!.discount.removeAt(index);
-//                                       cartModel!.subTotal.removeAt(index);
-//                                       cartModel!.total.removeAt(index);
-//                                       cartModel!.qty.removeAt(index);
+//                                       orderModel!.idProduct.removeAt(index);
+//                                       // cartModel!.price.removeAt(index);
+//                                       // cartModel!.discount.removeAt(index);
+//                                       orderModel!.subTotal.removeAt(index);
+//                                       // cartModel!.total.removeAt(index);
+//                                       orderModel!.qty.removeAt(index);
 
-//                                       cartRef.update(({
-//                                         'discount': cartModel!.discount,
-//                                         'id_product': cartModel!.idProduct,
-//                                         'price': cartModel!.price,
-//                                         'qty': cartModel!.qty,
-//                                         'subTotal': cartModel!.subTotal,
-//                                         'total': cartModel!.total
-//                                       }));
+//                                       // cartRef.update(({
+//                                       //   'discount': cartModel!.discount,
+//                                       //   'id_product': cartModel!.idProduct,
+//                                       //   'price': cartModel!.price,
+//                                       //   'qty': cartModel!.qty,
+//                                       //   'subTotal': cartModel!.subTotal,
+//                                       //   'total': cartModel!.total
+//                                       // }));
 //                                       Navigator.pop(context);
 //                                     },
 //                                     child: Text('Yes'),

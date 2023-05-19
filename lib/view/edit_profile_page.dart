@@ -10,20 +10,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:yourbae_project/controller/edit_controller.dart';
-import 'package:yourbae_project/controller/foto_controller.dart';
-import 'package:yourbae_project/model/user.dart';
+import 'package:yourbae_project/controller/photo_controller.dart';
+import 'package:yourbae_project/model/user_model.dart';
 
 class EditProfilePage extends StatelessWidget {
-  EditProfilePage({super.key, required this.userAccount});
-  UserAccount userAccount;
+  EditProfilePage({super.key, required this.userModel});
+  UserModel userModel;
 
   @override
   Widget build(BuildContext context) {
-    var name = TextEditingController(text: userAccount.name).obs;
+    var name = TextEditingController(text: userModel.name).obs;
     TextEditingController nomorHP =
-        TextEditingController(text: userAccount.nomorHP);
-    String kodeNegara = userAccount.kodeNegara;
-    String kodeNomorNegara = userAccount.kodeNomorNegara;
+        TextEditingController(text: userModel.nomorHP);
+    String kodeNegara = userModel.kodeNegara;
+    String kodeNomorNegara = userModel.kodeNomorNegara;
     var isEmpty = false.obs;
     var validNumber = true.obs;
     var control = false.obs;
@@ -146,10 +146,10 @@ class EditProfilePage extends StatelessWidget {
                               File(photoController.pathImage.toString())))
                       : CircleAvatar(
                           radius: 100,
-                          backgroundImage: userAccount.imageProfile == null
+                          backgroundImage: userModel.imageProfile == null
                               ? const NetworkImage(
                                   'https://www.its.ac.id/aktuaria/wp-content/uploads/sites/100/2018/03/user-320x320.png')
-                              : NetworkImage(userAccount.imageProfile!),
+                              : NetworkImage(userModel.imageProfile!),
                         ),
                 ),
               ),
@@ -203,8 +203,8 @@ class EditProfilePage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 20, right: 20).r,
                 child: Obx(
                   () => IntlPhoneField(
-                    initialCountryCode: userAccount.kodeNegara,
-                    initialValue: userAccount.nomorHP,
+                    initialCountryCode: userModel.kodeNegara,
+                    initialValue: userModel.nomorHP,
                     disableLengthCheck: validNumber.value,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     cursorHeight: 20.h,
@@ -277,7 +277,7 @@ class EditProfilePage extends StatelessWidget {
                               print('object');
                               editController.isLoading.value = true;
                               await editController.editUser(
-                                  userAccount,
+                                  userModel,
                                   name.value.text,
                                   kodeNegara,
                                   kodeNomorNegara,

@@ -17,6 +17,8 @@ class Kota extends GetView<AlamatController> {
 
   @override
   Widget build(BuildContext context) {
+    var alamatController = Get.put(AlamatController());
+    City? city;
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: DropdownSearch<City>(
@@ -55,15 +57,18 @@ class Kota extends GetView<AlamatController> {
         onChanged: (cityValue) {
           if (cityValue != null) {
             controller.kotaTujuanId.value = int.parse(cityValue.cityId!);
+            alamatController.namaKotaKab.value = cityValue.cityName!;
           } else {
             print("Tidak memilih kota / kabupaten tujuan apapun");
+            alamatController.kurir.value = '';
+            alamatController.cost.value = 0;
             controller.kotaTujuanId.value = 0;
           }
           controller.showButton();
         },
         showSearchBox: true,
         searchBoxDecoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             vertical: 10,
             horizontal: 25,
           ),
@@ -74,10 +79,10 @@ class Kota extends GetView<AlamatController> {
         ),
         popupItemBuilder: (context, item, isSelected) {
           return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Text(
               "${item.type} ${item.cityName}",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
               ),
             ),

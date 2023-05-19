@@ -2,21 +2,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:yourbae_project/model/product_model.dart';
+import 'package:yourbae_project/view/checkout.dart';
 import 'package:yourbae_project/view_model/single_cart.dart';
 import 'package:yourbae_project/view_model/single_product.dart';
-import '../model/cart.dart';
+import '../model/cart_model.dart';
 
 // ignore: must_be_immutable
 class CartList extends StatelessWidget {
   CartModel? cartModel;
   CartList({required this.cartModel});
-  List<Widget> listProduct = <Widget>[];
-  List<bool?> available = <bool?>[];
   @override
   Widget build(BuildContext context) {
+    List<Widget> listProduct = <Widget>[];
+    List<bool?> available = <bool?>[];
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
     final firebase = FirebaseFirestore.instance;
@@ -38,9 +40,11 @@ class CartList extends StatelessWidget {
               return const CircularProgressIndicator();
             } else if (snapshot.hasData) {
               return SingleCart(
-                  product: snapshot.data!.data()!,
-                  cartModel: cartModel!,
-                  index: i);
+                product: snapshot.data!.data()!,
+                cartModel: cartModel!,
+                index: i,
+                isShowDelete: true,
+              );
             }
             return const CircularProgressIndicator();
           }));
@@ -86,46 +90,52 @@ class CartList extends StatelessWidget {
                     FloatingActionButton.large(
                       backgroundColor: Colors.green,
                       onPressed: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: const Text('Are You Sure To Checkout ?'),
-                              actions: [
-                                MaterialButton(
-                                  onPressed: () async {
-                                    print(available);
-                                    final now = DateTime.now();
-                                    final date = DateFormat('yyyyMMddHHmmss')
-                                        .format(now);
-                                    await order.add(({
-                                      'uid_user': cartModel!.uidUser,
-                                      'time': int.tryParse(date),
-                                      'id_product': cartModel!.idProduct,
-                                      'qty': cartModel!.qty,
-                                      'subTotal': cartModel!.subTotal,
-                                      'isTake': false,
-                                      'isReady': false,
-                                      'date': DateTime.now(),
-                                      'available': available
-                                    }));
-                                    minusStock(
-                                        cartModel!.idProduct, cartModel!.qty);
-                                    cart.doc(cartModel!.uidUser).delete();
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Yes'),
-                                ),
-                                MaterialButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('No'),
-                                )
-                              ],
-                            );
-                          },
-                        );
+                        Get.to(Checkout(
+                            cartModel: cartModel!, totalAll: totalAll));
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (context) {
+                        //     return CupertinoAlertDialog(
+                        //       title: const Text('Are You Sure To Checkout ?'),
+                        //       actions: [
+                        //         MaterialButton(
+                        //           onPressed: () async {
+                        //             // print(available);
+                        //             // final now = DateTime.now();
+                        //             // final date = DateFormat('yyyyMMddHHmmss')
+                        //             //     .format(now);
+                        //             // await order.add(({
+                        //             //   'uid_user': cartModel!.uidUser,
+                        //             //   'time': int.tryParse(date),
+                        //             //   'id_product': cartModel!.idProduct,
+                        //             //   'qty': cartModel!.qty,
+                        //             //   'subTotal': cartModel!.subTotal,
+                        //             //   'isTake': false,
+                        //             //   'isReady': false,
+                        //             //   'date': DateTime.now(),
+                        //             //   'available': available
+                        //             // }));
+                        //             // minusStock(
+                        //             //     cartModel!.idProduct, cartModel!.qty);
+                        //             // cart.doc(cartModel!.uidUser).delete();
+                        //             // Navigator.pop(context);
+                        //             Get.to(Checkout(
+                        //               cartModel: cartModel!,
+                        //               totalAll: totalAll,
+                        //             ));
+                        //           },
+                        //           child: const Text('Yes'),
+                        //         ),
+                        //         MaterialButton(
+                        //           onPressed: () {
+                        //             Navigator.pop(context);
+                        //           },
+                        //           child: const Text('No'),
+                        //         )
+                        //       ],
+                        //     );
+                        //   },
+                        // );
                       },
                       child: const Icon(
                         Icons.shopping_basket_outlined,

@@ -5,15 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/controller/auth_controller.dart';
 import 'package:yourbae_project/view/cart.dart';
 import 'package:yourbae_project/view/main_view.dart';
+import 'package:yourbae_project/view/order_page.dart';
 import 'package:yourbae_project/view/profil.dart';
 import 'package:yourbae_project/view/flash_sale_page.dart';
 import 'package:yourbae_project/view/search_page.dart';
 
 import '../controller/controller.dart';
-import '../model/user.dart';
+import '../model/user_model.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -22,13 +24,13 @@ class Home extends StatelessWidget {
     var authController = Get.put(AuthController());
     final auth = FirebaseAuth.instance.currentUser!.uid;
     PageController? pageController;
+    controller.selectedPages.value = 0;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    DocumentReference<UserAccount> users = firestore
+    DocumentReference<UserModel> users = firestore
         .collection('user')
         .doc(auth)
-        .withConverter<UserAccount>(
-            fromFirestore: (snapshot, _) =>
-                UserAccount.fromJson(snapshot.data()),
+        .withConverter<UserModel>(
+            fromFirestore: (snapshot, _) => UserModel.fromJson(snapshot.data()),
             toFirestore: (users, _) => users.toJson());
 
     pageController = PageController();
@@ -46,7 +48,7 @@ class Home extends StatelessWidget {
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
-        children: <Widget>[MainView(), Cart(), SearchPage(), FlashSalePage()],
+        children: <Widget>[MainView(), Cart(), SearchPage(), OrderPage()],
       ),
       floatingActionButton: showFab
           ? Container(
@@ -68,7 +70,7 @@ class Home extends StatelessWidget {
                               child: CircularProgressIndicator(),
                             );
                           }
-                          return Profil(userAccount: snapshot.data!.data()!);
+                          return Profil(userModel: snapshot.data!.data()!);
                         }));
                   },
                   child: Hero(

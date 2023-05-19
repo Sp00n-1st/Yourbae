@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/view_model/cart_list.dart';
 
-import '../model/cart.dart';
+import '../model/cart_model.dart';
 import '../view_model/single_cart.dart';
 
 class Cart extends StatelessWidget {

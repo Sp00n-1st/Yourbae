@@ -12,10 +12,11 @@ class SearchPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: Text(
-          'Search Shoe',
-          style: GoogleFonts.poppins(color: Colors.black),
-        ),
+        title: Text('Cari Sepatu',
+            style: GoogleFonts.poppins(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+                fontSize: 30)),
       ),
       body: Column(
         children: [

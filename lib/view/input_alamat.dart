@@ -76,7 +76,7 @@ class InputAlamat extends StatelessWidget {
                                           alamatController.hiddenLoading.value =
                                               false;
                                           alamatController.kurir.value = value!;
-                                          alamatController.ongkosKirim();
+                                          // alamatController.ongkosKirim();
                                         },
                                       ),
                                       Text('JNE'),
@@ -94,7 +94,7 @@ class InputAlamat extends StatelessWidget {
                                           alamatController.hiddenLoading.value =
                                               false;
                                           alamatController.kurir.value = value!;
-                                          alamatController.ongkosKirim();
+                                          // alamatController.ongkosKirim();
                                         },
                                       ),
                                       Text('Pos Indonesia'),

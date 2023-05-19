@@ -1,5 +1,6 @@
 class CartModel {
-  String uidUser, time;
+  String uidUser;
+  int time;
   List<String> idProduct;
   List<int> qty;
   List<int> size;
@@ -23,7 +24,7 @@ class CartModel {
             size: (json['size'] as List).cast<int>(),
             isCheckout: json['isCheckout'] as bool,
             isPay: json['isPay'] as bool,
-            time: json['time'] as String,
+            time: json['time'] as int,
             subTotal: (json['subTotal'] as List).cast<num>());
   Map<String, Object?> toJson() {
     return {

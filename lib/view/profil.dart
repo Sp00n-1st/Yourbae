@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/controller/auth_controller.dart';
-import 'package:yourbae_project/model/user.dart';
+import 'package:yourbae_project/model/user_model.dart';
 import 'package:yourbae_project/view/login.dart';
 import 'package:yourbae_project/view/edit_profile_page.dart';
 import 'package:yourbae_project/view/input_alamat.dart';
@@ -12,8 +12,8 @@ import 'package:yourbae_project/view/input_alamat.dart';
 import '../view_model/menu_profile.dart';
 
 class Profil extends StatelessWidget {
-  Profil({super.key, required this.userAccount});
-  UserAccount userAccount;
+  Profil({super.key, required this.userModel});
+  UserModel userModel;
   @override
   Widget build(BuildContext context) {
     var authController = Get.put(AuthController());
@@ -48,7 +48,7 @@ class Profil extends StatelessWidget {
                     child: SizedBox(
                       width: 198.w,
                       child: Text(
-                        userAccount.name,
+                        userModel.name,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w500, fontSize: 24.sp),
@@ -64,7 +64,7 @@ class Profil extends StatelessWidget {
                     fun: () {
                       Get.to(
                           EditProfilePage(
-                            userAccount: userAccount,
+                            userModel: userModel,
                           ),
                           transition: Transition.leftToRightWithFade);
                     },
@@ -156,13 +156,13 @@ class Profil extends StatelessWidget {
                     borderRadius: BorderRadius.circular(17.sp)),
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.sp),
-                    child: userAccount.imageProfile == null
+                    child: userModel.imageProfile == null
                         ? Image.network(
                             'https://www.its.ac.id/aktuaria/wp-content/uploads/sites/100/2018/03/user-320x320.png',
                             fit: BoxFit.fill,
                           )
                         : Image.network(
-                            userAccount.imageProfile!,
+                            userModel.imageProfile!,
                             fit: BoxFit.fill,
                           )),
               ),

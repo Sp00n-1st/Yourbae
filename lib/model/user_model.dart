@@ -1,9 +1,9 @@
-class UserAccount {
+class UserModel {
   final String name, email, nomorHP, kodeNegara, kodeNomorNegara;
   final String? imageProfile, token;
   final bool isDisable;
 
-  UserAccount(
+  UserModel(
       {required this.token,
       required this.email,
       required this.name,
@@ -13,7 +13,7 @@ class UserAccount {
       required this.imageProfile,
       required this.isDisable});
 
-  UserAccount.fromJson(Map<String, dynamic>? json)
+  UserModel.fromJson(Map<String, dynamic>? json)
       : this(
             email: json!['email'] as String,
             token: json['token'] as String?,

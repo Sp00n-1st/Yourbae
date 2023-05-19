@@ -22,8 +22,9 @@ class AlamatController extends GetxController {
   var hiddenLoading = true.obs;
   var kurir = ''.obs;
   var cost = 0.obs;
+  var namaProvinsi = ''.obs;
+  var namaKotaKab = ''.obs;
   late TextEditingController beratC;
-  double berat = 1.50;
   RajaOngkirModel? rajaOngkirModel;
 
   Future<List<Province>> getDataAddress(String filter) async {
@@ -33,7 +34,7 @@ class AlamatController extends GetxController {
       final response = await http.get(
         url,
         headers: {
-          "key": "0ae702200724a396a933fa0ca4171a7e",
+          "key": "401c597e3c8742eacce68bf648458b1b",
         },
       );
 
@@ -55,7 +56,9 @@ class AlamatController extends GetxController {
     }
   }
 
-  void ongkosKirim() async {
+  void ongkosKirim(int qty) async {
+    int berat = 1500 * qty;
+
     Uri url = Uri.parse("https://api.rajaongkir.com/starter/cost");
     try {
       final response = await http.post(
@@ -72,8 +75,13 @@ class AlamatController extends GetxController {
         },
       );
 
-      var data = json.decode(response.body);
-      rajaOngkirModel = RajaOngkirModel.fromJson(data);
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        rajaOngkirModel = RajaOngkirModel.fromJson(data);
+      } else {
+        print(response.statusCode);
+        print('Error');
+      }
       // var listAllCourier = Courier.fromJsonList(results);
       // var courier = listAllCourier[0];
 
@@ -116,17 +124,5 @@ class AlamatController extends GetxController {
       hiddenButton.value = true;
       hiddenRadio.value = true;
     }
-  }
-
-  @override
-  void onInit() {
-    beratC = TextEditingController(text: "$berat");
-    super.onInit();
-  }
-
-  @override
-  void onClose() {
-    beratC.dispose();
-    super.onClose();
   }
 }

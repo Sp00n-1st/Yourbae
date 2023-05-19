@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:yourbae_project/controller/foto_controller.dart';
+import 'package:yourbae_project/controller/photo_controller.dart';
 
-import '../model/user.dart';
+import '../model/user_model.dart';
 
 class EditController extends GetxController {
   var isLoading = false.obs;
 
-  Future<void> editUser(UserAccount userAccount, String name, String kodeNegara,
+  Future<void> editUser(UserModel userModel, String name, String kodeNegara,
       String kodeNomorNegara, String nomorHP) async {
     String? imageSave;
     final auth = FirebaseAuth.instance.currentUser!.uid;
@@ -17,12 +17,11 @@ class EditController extends GetxController {
     var photoController = Get.put(PhotoController());
 
     photoController.uploading.value = !photoController.uploading.value;
-    print(photoController.uploading);
-    await photoController.upload();
-    if (photoController.pathImage.isEmpty && userAccount.imageProfile != null) {
-      imageSave = userAccount.imageProfile;
+    await photoController.upload('ProfileImages', true);
+    if (photoController.pathImage.isEmpty && userModel.imageProfile != null) {
+      imageSave = userModel.imageProfile;
     } else if (photoController.pathImage.isNotEmpty &&
-        userAccount.imageProfile != null) {
+        userModel.imageProfile != null) {
       imageSave = photoController.downloadUrl.value;
     } else if (photoController.pathImage.isNotEmpty) {
       imageSave = photoController.downloadUrl.value;
