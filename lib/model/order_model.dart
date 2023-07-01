@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
-  String uidUser, alamat, buktiBayar;
   List<String> idProduct;
   List<int> qty, size;
   List<num> subTotal;
+  List<bool> isRating;
+  String uidUser, alamat, buktiBayar;
   int time;
   num totalTagihan, ongkosKirim;
-  bool isPay;
+  bool isPay, isConfirm;
   Timestamp timeStamp;
   OrderModel(
       {required this.uidUser,
@@ -17,6 +18,8 @@ class OrderModel {
       required this.idProduct,
       required this.qty,
       required this.isPay,
+      required this.isConfirm,
+      required this.isRating,
       required this.time,
       required this.subTotal,
       required this.ongkosKirim,
@@ -29,6 +32,8 @@ class OrderModel {
           alamat: json['alamat'] as String,
           buktiBayar: json['buktiBayar'] as String,
           isPay: json['isPay'] as bool,
+          isConfirm: json['isConfirm'] as bool,
+          isRating: (json['isRating'] as List).cast<bool>(),
           idProduct: (json['idProduct'] as List).cast<String>(),
           qty: (json['qty'] as List).cast<int>(),
           size: (json['size'] as List).cast<int>(),
@@ -44,6 +49,8 @@ class OrderModel {
       'alamat': alamat,
       'buktiBayar': buktiBayar,
       'isPay': isPay,
+      'isConfirm': isConfirm,
+      'isRating': isRating,
       'idProduct': idProduct,
       'qty': qty,
       'size': size,
