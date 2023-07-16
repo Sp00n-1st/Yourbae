@@ -1,12 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:yourbae_project/model/raja_ongkir_model.dart';
-
-import '../model/courier_model.dart';
+import 'package:oktoast/oktoast.dart';
+import '../model/raja_ongkir_model.dart';
 import '../model/province_model.dart';
 
 class AlamatController extends GetxController {
@@ -24,12 +21,12 @@ class AlamatController extends GetxController {
   var cost = 0.obs;
   var namaProvinsi = ''.obs;
   var namaKotaKab = ''.obs;
+  var service = ''.obs;
   late TextEditingController beratC;
   RajaOngkirModel? rajaOngkirModel;
 
   Future<List<Province>> getDataAddress(String filter) async {
     Uri url = Uri.parse("https://api.rajaongkir.com/starter/province");
-
     try {
       final response = await http.get(
         url,
@@ -37,28 +34,21 @@ class AlamatController extends GetxController {
           "key": "401c597e3c8742eacce68bf648458b1b",
         },
       );
-
       var data = json.decode(response.body) as Map<String, dynamic>;
-
       var statusCode = data["rajaongkir"]["status"]["code"];
-
       if (statusCode != 200) {
         throw data["rajaongkir"]["status"]["description"];
       }
-
       var listAllProvince = data["rajaongkir"]["results"] as List<dynamic>;
-
       var models = Province.fromJsonList(listAllProvince);
       return models;
     } catch (err) {
-      print(err);
       return List<Province>.empty();
     }
   }
 
   void ongkosKirim(int qty) async {
-    int berat = 1500 * qty;
-
+    int berat = 150 * qty;
     Uri url = Uri.parse("https://api.rajaongkir.com/starter/cost");
     try {
       final response = await http.post(
@@ -74,41 +64,16 @@ class AlamatController extends GetxController {
           "content-type": "application/x-www-form-urlencoded",
         },
       );
-
       if (response.statusCode == 200) {
         var data = json.decode(response.body);
         rajaOngkirModel = RajaOngkirModel.fromJson(data);
       } else {
-        print(response.statusCode);
-        print('Error');
+        showToast(response.body,
+            position: const ToastPosition(align: Alignment.bottomCenter));
       }
-      // var listAllCourier = Courier.fromJsonList(results);
-      // var courier = listAllCourier[0];
-
       hiddenKurir.value = false;
       hiddenLoading.value = true;
-      // Get.defaultDialog(
-      //   title: courier.name!,
-      //   content: Column(
-      //     children: courier.costs!
-      //         .map(
-      //           (e) => ListTile(
-      //             title: Text("${e.service}"),
-      //             subtitle: Text(
-      //                 NumberFormat.currency(locale: 'id', symbol: 'Rp. ')
-      //                     .format(e.cost![0].value)),
-      //             trailing: Text(
-      //               courier.code == "pos"
-      //                   ? "${e.cost![0].etd}"
-      //                   : "${e.cost![0].etd} HARI",
-      //             ),
-      //           ),
-      //         )
-      //         .toList(),
-      //   ),
-      // );
     } catch (err) {
-      print(err);
       Get.defaultDialog(
         title: "Terjadi Kesalahan",
         middleText: err.toString(),

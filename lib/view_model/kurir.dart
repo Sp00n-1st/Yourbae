@@ -1,14 +1,9 @@
-import 'dart:convert';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'package:yourbae_project/controller/alamat_controller.dart';
-import 'package:yourbae_project/model/courier_model.dart';
 import 'package:intl/intl.dart';
-import 'package:yourbae_project/model/raja_ongkir_model.dart';
+import '../controller/alamat_controller.dart';
 
 class Kurir extends GetView<AlamatController> {
   const Kurir({
@@ -37,6 +32,7 @@ class Kurir extends GetView<AlamatController> {
                 (e) => GestureDetector(
                   onTap: () {
                     alamatController.cost.value = e.cost![0].value!;
+                    alamatController.service.value = e.service!;
                   },
                   child: Obx(
                     () => ListTile(

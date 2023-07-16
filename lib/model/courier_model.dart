@@ -1,13 +1,3 @@
-// To parse this JSON data, do
-//
-//     final courier = courierFromJson(jsonString);
-
-import 'dart:convert';
-
-Courier courierFromJson(String str) => Courier.fromJson(json.decode(str));
-
-String courierToJson(Courier data) => json.encode(data.toJson());
-
 class Courier {
   Courier({
     this.code,
@@ -33,7 +23,7 @@ class Courier {
       };
 
   static List<Courier> fromJsonList(List list) {
-    if (list.length == 0) return List<Courier>.empty();
+    if (list.isEmpty) return List<Courier>.empty();
     return list.map((item) => Courier.fromJson(item)).toList();
   }
 }

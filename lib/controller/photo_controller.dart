@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:uuid/uuid.dart';
 
 class PhotoController extends GetxController {
@@ -71,7 +70,7 @@ class PhotoController extends GetxController {
         return Container(
           width: double.infinity,
           height: 100.h,
-          padding: EdgeInsets.fromLTRB(20, 10, 0, 0).r,
+          padding: const EdgeInsets.fromLTRB(20, 10, 0, 0).r,
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -80,12 +79,11 @@ class PhotoController extends GetxController {
               )),
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 40.h,
                 child: MaterialButton(
                   onPressed: () async {
-                    print('Camera');
                     Navigator.pop(context);
                     await pickPhotoFromGallery(ImageSource.camera);
                   },
@@ -106,12 +104,11 @@ class PhotoController extends GetxController {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 40.h,
                 child: MaterialButton(
                   onPressed: () async {
-                    print('Gallerry');
                     Navigator.pop(context);
                     await pickPhotoFromGallery(ImageSource.gallery);
                   },

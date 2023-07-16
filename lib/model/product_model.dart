@@ -1,6 +1,6 @@
 class Product {
-  final String nameProduct, descItem, category, imageUrl;
-
+  final String nameProduct, descItem, category;
+  final List<String> imageUrl;
   final int price, size37, size38, size39, size40, size41, size42;
 
   Product(
@@ -20,7 +20,7 @@ class Product {
       : this(
           nameProduct: json!['nameProduct'] as String,
           category: json['category'] as String,
-          imageUrl: json['imageUrl'] as String,
+          imageUrl: (json['imageUrl'] as List).cast<String>(),
           descItem: json['descItem'] as String,
           price: json['price'] as int,
           size37: json['size37'] as int,

@@ -1,21 +1,21 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:yourbae_project/controller/edit_controller.dart';
-import 'package:yourbae_project/controller/photo_controller.dart';
-import 'package:yourbae_project/model/user_model.dart';
+import '../controller/edit_controller.dart';
+import '../controller/photo_controller.dart';
+import '../model/user_model.dart';
+import '../view_model/custom_appbar.dart';
+import '../view_model/custom_box_input.dart';
 
 class EditProfilePage extends StatelessWidget {
-  EditProfilePage({super.key, required this.userModel});
-  UserModel userModel;
+  const EditProfilePage({super.key, required this.userModel});
+  final UserModel userModel;
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +31,11 @@ class EditProfilePage extends StatelessWidget {
     var editController = Get.put(EditController());
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(
-            CupertinoIcons.back,
-            color: Colors.black,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Edit Profile',
-          style: GoogleFonts.poppins(
-              color: Colors.black, fontWeight: FontWeight.w600, fontSize: 30),
-        ),
+      appBar: CustomAppBar(
+        title: 'Edit Profil',
+        fun: () {
+          Get.back();
+        },
       ),
       body: SingleChildScrollView(
         child: Obx(
@@ -62,7 +49,6 @@ class EditProfilePage extends StatelessWidget {
                 child: GestureDetector(
                   // onTap: photoController.pickPhotoFromGallery,
                   onTap: () {
-                    print('data');
                     showModalBottomSheet(
                       backgroundColor: Colors.transparent,
                       context: context,
@@ -70,7 +56,7 @@ class EditProfilePage extends StatelessWidget {
                         return Container(
                           width: double.infinity,
                           height: 100.h,
-                          padding: EdgeInsets.fromLTRB(20, 10, 0, 0).r,
+                          padding: const EdgeInsets.fromLTRB(20, 10, 0, 0).r,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.only(
@@ -79,12 +65,11 @@ class EditProfilePage extends StatelessWidget {
                               )),
                           child: Column(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: 40.h,
                                 child: MaterialButton(
                                   onPressed: () async {
-                                    print('Camera');
                                     Navigator.pop(context);
                                     await photoController.pickPhotoFromGallery(
                                         ImageSource.camera);
@@ -106,12 +91,11 @@ class EditProfilePage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: 40.h,
                                 child: MaterialButton(
                                   onPressed: () async {
-                                    print('Gallerry');
                                     Navigator.pop(context);
                                     await photoController.pickPhotoFromGallery(
                                         ImageSource.gallery);
@@ -159,40 +143,11 @@ class EditProfilePage extends StatelessWidget {
                     'Nama',
                     style: GoogleFonts.poppins(),
                   )),
-              Container(
-                margin: const EdgeInsets.only(left: 20, right: 20).r,
-                child: TextFormField(
-                  style: GoogleFonts.poppins(),
-                  controller: name.value,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    errorStyle:
-                        GoogleFonts.poppins(fontSize: 12.sp, color: Colors.red),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            BorderSide(color: Colors.blue.shade900, width: 2)),
-                    hintText: 'Input First Name',
-                    border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      Future.delayed(Duration(milliseconds: 50), () {
-                        isEmpty.value = true;
-                      });
-                      return 'Nama Tidak Boleh Kosong!';
-                    } else {
-                      Future.delayed(Duration(milliseconds: 50), () {
-                        isEmpty.value = false;
-                      });
-                    }
-
-                    return null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-              ),
+              CustomInputBox(
+                  isPassword: false,
+                  hintText: 'Input Nama',
+                  errorMessage: 'Nama Tidak Boleh Kosong!',
+                  controllerText: name.value),
               Container(
                   margin: const EdgeInsets.only(left: 20, top: 30, bottom: 10),
                   child: Text(
@@ -241,7 +196,6 @@ class EditProfilePage extends StatelessWidget {
                     onCountryChanged: (country) {
                       kodeNegara = country.code;
                       kodeNomorNegara = country.dialCode;
-                      print('Country changed to: ' + country.name);
                     },
                   ),
                 ),
@@ -274,7 +228,6 @@ class EditProfilePage extends StatelessWidget {
                                 nomorHP.text.isNotEmpty &&
                                 kodeNegara.isNotEmpty &&
                                 kodeNomorNegara.isNotEmpty) {
-                              print('object');
                               editController.isLoading.value = true;
                               await editController.editUser(
                                   userModel,

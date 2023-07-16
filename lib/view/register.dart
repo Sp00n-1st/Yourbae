@@ -6,12 +6,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:yourbae_project/controller/auth_controller.dart';
-import 'package:yourbae_project/controller/controller.dart';
-import 'package:yourbae_project/controller/createUser_controller.dart';
-import 'package:yourbae_project/view/login.dart';
+import '../controller/controller.dart';
+import '../controller/create_user_controller.dart';
+import '../view/login.dart';
 import '../view_model/input_box.dart';
-import '../view_model/custom_button.dart';
 import '../view_model/custom_button_auth.dart';
 
 class Register extends StatelessWidget {
@@ -19,16 +17,17 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var createUserController = Get.put(CreateUserController());
-    var authController = Get.put(AuthController());
-    var controller = Get.put(Controller());
+    CreateUserController createUserController = Get.put(CreateUserController());
+    Controller controller = Get.put(Controller());
     String nomorHP = '';
     String kodeNegara = '';
     String kodeNomorNegara = '';
     TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           SizedBox(
@@ -121,10 +120,7 @@ class Register extends StatelessWidget {
                             kodeNomorNegara = phone.countryCode;
                             kodeNegara = phone.countryISOCode;
                           },
-                          onCountryChanged: (country) {
-                            print(country.code);
-                            print('Country changed to: ' + country.name);
-                          },
+                          onCountryChanged: (country) {},
                         ),
                       ),
                     ),
@@ -168,8 +164,8 @@ class Register extends StatelessWidget {
                                       context, e.message.toString());
                                 }
                               } else {
-                                showToast('Please Enter All Data Required !',
-                                    position: ToastPosition(
+                                showToast('Harap Masukkan Semua Data !',
+                                    position: const ToastPosition(
                                         align: Alignment.bottomCenter),
                                     backgroundColor: Colors.red);
                                 createUserController.isLoading.value = false;
@@ -186,57 +182,6 @@ class Register extends StatelessWidget {
                           ),
                     SizedBox(
                       height: 69.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/line1.png',
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                          width: 200.w,
-                          child: Text(
-                            'Atau Register Dengan',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w300,
-                                color: Colors.white),
-                          ),
-                        ),
-                        Image.asset(
-                          'assets/line2.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomButton(
-                          image: 'fb',
-                        ),
-                        SizedBox(
-                          width: 16.w,
-                        ),
-                        CustomButton(
-                          image: 'google',
-                        ),
-                        SizedBox(
-                          width: 16.w,
-                        ),
-                        CustomButton(
-                          image: 'twitter',
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 28.h,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

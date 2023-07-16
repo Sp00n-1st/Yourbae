@@ -1,23 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
-  String uidUser, alamat, buktiBayar;
   List<String> idProduct;
   List<int> qty, size;
   List<num> subTotal;
-  int time;
+  List<bool> isRating;
+  String uidUser, alamat, buktiBayar, nomorResi;
   num totalTagihan, ongkosKirim;
-  bool isPay;
+  bool isPay, isConfirm;
   Timestamp timeStamp;
   OrderModel(
       {required this.uidUser,
       required this.alamat,
+      required this.nomorResi,
       required this.buktiBayar,
       required this.size,
       required this.idProduct,
       required this.qty,
       required this.isPay,
-      required this.time,
+      required this.isConfirm,
+      required this.isRating,
       required this.subTotal,
       required this.ongkosKirim,
       required this.totalTagihan,
@@ -28,11 +30,13 @@ class OrderModel {
           uidUser: json!['uidUser'] as String,
           alamat: json['alamat'] as String,
           buktiBayar: json['buktiBayar'] as String,
+          nomorResi: json['nomorResi'] as String,
           isPay: json['isPay'] as bool,
+          isConfirm: json['isConfirm'] as bool,
+          isRating: (json['isRating'] as List).cast<bool>(),
           idProduct: (json['idProduct'] as List).cast<String>(),
           qty: (json['qty'] as List).cast<int>(),
           size: (json['size'] as List).cast<int>(),
-          time: json['time'] as int,
           subTotal: (json['subTotal'] as List).cast<num>(),
           totalTagihan: json['totalTagihan'] as num,
           ongkosKirim: json['ongkosKirim'] as num,
@@ -44,10 +48,12 @@ class OrderModel {
       'alamat': alamat,
       'buktiBayar': buktiBayar,
       'isPay': isPay,
+      'isConfirm': isConfirm,
+      'isRating': isRating,
       'idProduct': idProduct,
       'qty': qty,
+      'nomorResi': nomorResi,
       'size': size,
-      'time': time,
       'subTotal': subTotal,
       'totalTagihan': totalTagihan,
       'ongkosKirim': ongkosKirim,

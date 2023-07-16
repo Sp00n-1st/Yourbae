@@ -2,23 +2,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:yourbae_project/view/payment_confirmation.dart';
+import 'package:oktoast/oktoast.dart';
+import '../view/payment_confirmation.dart';
+import '../view_model/modal_rating.dart';
 import '../model/order_model.dart';
 import '../view_model/list_order.dart';
 
 class OrderPage extends StatelessWidget {
+  const OrderPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
-    final firabase = FirebaseFirestore.instance;
+    final firebase = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance.currentUser!.uid;
-    final orderRef = firabase.collection('order');
-    final order = firabase
+    final orderRef = firebase.collection('order');
+    final order = firebase
         .collection('order')
         .where('uidUser', isEqualTo: auth)
         .withConverter<OrderModel>(
@@ -26,6 +31,7 @@ class OrderPage extends StatelessWidget {
                 OrderModel.fromJson(snapshot.data()),
             toFirestore: (orderModel, _) => orderModel.toJson());
     return Scaffold(
+        backgroundColor: Colors.grey.shade200,
         appBar: AppBar(
             centerTitle: true,
             backgroundColor: Colors.transparent,
@@ -58,37 +64,15 @@ class OrderPage extends StatelessWidget {
                       child: SizedBox(
                           width: 600,
                           height: 400,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                print(snapshot.data!.size);
-                              },
-                              child: const Text('data'))));
+                          child: Image.asset('assets/nodata3.gif')));
                 }
-
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data!.size,
                   itemBuilder: (context, index) {
-                    num totalAll = 0;
-                    // for (int i = 0;
-                    //     i <
-                    //         snapshot.data!.docs
-                    //             .elementAt(index)
-                    //             .data()
-                    //             .total
-                    //             .length;
-                    //     i++) {
-                    //   totalAll +=
-                    //       snapshot.data!.docs.elementAt(index).data().total[i];
-                    // }
-
-                    var dateTime = DateFormat('dd/MM/yyyy').format(snapshot
-                        .data!.docs
-                        .elementAt(index)
-                        .data()
-                        .timeStamp
-                        .toDate());
-
+                    OrderModel orderModel = snapshot.data!.docs[index].data();
+                    String dateTime = DateFormat('dd/MM/yyyy')
+                        .format(orderModel.timeStamp.toDate());
                     return Container(
                       margin:
                           const EdgeInsets.only(right: 5, left: 5, bottom: 20),
@@ -96,8 +80,8 @@ class OrderPage extends StatelessWidget {
                           color: Colors.grey[300],
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
-                            const BoxShadow(
+                          boxShadow: const [
+                            BoxShadow(
                                 blurRadius: 1.1,
                                 color: Colors.black,
                                 offset: Offset(0.5, 0.5))
@@ -122,11 +106,7 @@ class OrderPage extends StatelessWidget {
                                         dateTime,
                                         style: GoogleFonts.poppins(),
                                       ),
-                                      snapshot.data!.docs
-                                                  .elementAt(index)
-                                                  .data()
-                                                  .isPay ==
-                                              true
+                                      orderModel.isPay == true
                                           ? Text(
                                               'Menunggu Konfirmasi Admin',
                                               style: GoogleFonts.poppins(
@@ -143,16 +123,10 @@ class OrderPage extends StatelessWidget {
                                     ],
                                   ))),
                           SizedBox(
-                            height: (snapshot.data!.docs
-                                        .elementAt(index)
-                                        .data()
-                                        .idProduct
-                                        .length *
-                                    30) +
+                            height: (orderModel.idProduct.length * 90.h) +
                                 (sizeHeight * 0.03),
                             child: OrderList(
-                              orderModel:
-                                  snapshot.data?.docs.elementAt(index).data(),
+                              orderModel: orderModel,
                             ),
                           ),
                           Container(
@@ -170,7 +144,7 @@ class OrderPage extends StatelessWidget {
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Container(
+                                      SizedBox(
                                         width: 150.w,
                                         child: Text(
                                           'Total Ongkos Kirim',
@@ -180,16 +154,13 @@ class OrderPage extends StatelessWidget {
                                       Text(
                                           NumberFormat.currency(
                                                   locale: 'id', symbol: 'Rp. ')
-                                              .format(snapshot.data!.docs
-                                                  .elementAt(index)
-                                                  .data()
-                                                  .ongkosKirim),
+                                              .format(orderModel.ongkosKirim),
                                           style: GoogleFonts.poppins())
                                     ]),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Container(
+                                      SizedBox(
                                         width: 150.w,
                                         child: Text(
                                           'Total Tagihan',
@@ -199,17 +170,13 @@ class OrderPage extends StatelessWidget {
                                       Text(
                                           NumberFormat.currency(
                                                   locale: 'id', symbol: 'Rp. ')
-                                              .format(snapshot.data!.docs
-                                                  .elementAt(index)
-                                                  .data()
-                                                  .totalTagihan),
+                                              .format(orderModel.totalTagihan),
                                           style: GoogleFonts.poppins())
                                     ]),
                               ],
                             ),
                           ),
-                          snapshot.data?.docs.elementAt(index).data().isPay ==
-                                  false
+                          orderModel.isPay == false
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -221,8 +188,16 @@ class OrderPage extends StatelessWidget {
                                           context: context,
                                           builder: (context) {
                                             return CupertinoAlertDialog(
-                                              title: const Text(
-                                                  'Are You Sure To Cancel Order ?'),
+                                              title: Text(
+                                                'Batalkan Pesanan ?',
+                                                maxLines: 1,
+                                                style: GoogleFonts.poppins(),
+                                              ),
+                                              content: Icon(
+                                                CupertinoIcons.xmark_circle,
+                                                color: Colors.red,
+                                                size: 50.r,
+                                              ),
                                               actions: [
                                                 MaterialButton(
                                                     onPressed: () {
@@ -243,7 +218,7 @@ class OrderPage extends StatelessWidget {
                                                         builder: (context) {
                                                           return CupertinoAlertDialog(
                                                             title: Text(
-                                                              'Order Has Been Cancel',
+                                                              'Pesanan Telah Dibatalkan',
                                                               style: GoogleFonts
                                                                   .poppins(),
                                                             ),
@@ -258,21 +233,34 @@ class OrderPage extends StatelessWidget {
                                                                   Navigator.pop(
                                                                       context);
                                                                 },
-                                                                child:
-                                                                    const Text(
-                                                                        'OK'),
+                                                                child: Text(
+                                                                    'OK',
+                                                                    style: GoogleFonts
+                                                                        .poppins(
+                                                                            color:
+                                                                                Colors.black)),
                                                               )
                                                             ],
                                                           );
                                                         },
                                                       );
                                                     },
-                                                    child: const Text('Yes')),
+                                                    child: Text(
+                                                      'Ya',
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              color:
+                                                                  Colors.black),
+                                                    )),
                                                 MaterialButton(
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: const Text('No'),
+                                                  child: Text('Tidak',
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              color: Colors
+                                                                  .black)),
                                                 )
                                               ],
                                             );
@@ -288,12 +276,8 @@ class OrderPage extends StatelessWidget {
                                     SizedBox(
                                       width: 20.w,
                                     ),
-                                    snapshot.data!.docs
-                                                .elementAt(index)
-                                                .data()
-                                                .isPay ==
-                                            true
-                                        ? SizedBox()
+                                    orderModel.isPay == true
+                                        ? const SizedBox()
                                         : ActionChip(
                                             padding: const EdgeInsets.fromLTRB(
                                                     10, 10, 10, 10)
@@ -305,10 +289,7 @@ class OrderPage extends StatelessWidget {
                                                       id: snapshot.data!.docs
                                                           .elementAt(index)
                                                           .id,
-                                                      totalTagihan: snapshot
-                                                          .data!.docs
-                                                          .elementAt(index)
-                                                          .data()
+                                                      totalTagihan: orderModel
                                                           .totalTagihan),
                                                   transition: Transition
                                                       .leftToRightWithFade);
@@ -325,6 +306,113 @@ class OrderPage extends StatelessWidget {
                                   ],
                                 )
                               : const SizedBox(),
+                          orderModel.isConfirm == false
+                              ? const SizedBox()
+                              : Row(
+                                  mainAxisAlignment:
+                                      !orderModel.isRating.contains(false)
+                                          ? MainAxisAlignment.center
+                                          : MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ActionChip(
+                                        backgroundColor: Colors.green,
+                                        onPressed: () async {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return CupertinoAlertDialog(
+                                                title: Text(
+                                                  'Nomor Resi',
+                                                  style: GoogleFonts.poppins(),
+                                                ),
+                                                content: Container(
+                                                  width: double.infinity,
+                                                  height: 45.h,
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                              10, 5, 10, 5)
+                                                          .r,
+                                                  decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xffC9EEFF),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5)),
+                                                  child: Center(
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                            orderModel
+                                                                .nomorResi,
+                                                            style: GoogleFonts.poppins(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 14.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600)),
+                                                        Material(
+                                                          color: Colors
+                                                              .transparent,
+                                                          child: IconButton(
+                                                              onPressed: () {
+                                                                showToast(
+                                                                    'Berhasil Di Salin',
+                                                                    textStyle:
+                                                                        GoogleFonts
+                                                                            .poppins(),
+                                                                    position: const ToastPosition(
+                                                                        align: Alignment
+                                                                            .bottomCenter));
+
+                                                                Clipboard.setData(ClipboardData(
+                                                                    text: orderModel
+                                                                        .nomorResi
+                                                                        .toString()));
+                                                              },
+                                                              icon: const Icon(
+                                                                  Icons.copy)),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        label: Text(
+                                          'Cek Resi',
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500),
+                                        )),
+                                    orderModel.isRating.contains(false)
+                                        ? ActionChip(
+                                            backgroundColor: Colors.blue,
+                                            onPressed: () {
+                                              ModalRating().showModal(
+                                                  context,
+                                                  orderModel,
+                                                  snapshot.data!.docs
+                                                      .elementAt(index)
+                                                      .id);
+                                            },
+                                            label: Text(
+                                              'Beri Rating',
+                                              style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500),
+                                            ))
+                                        : const SizedBox()
+                                  ],
+                                ),
                           SizedBox(
                             height: 10.h,
                           ),

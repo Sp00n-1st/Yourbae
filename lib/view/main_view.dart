@@ -1,28 +1,22 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yourbae_project/controller/controller.dart';
-import 'package:yourbae_project/view_model/list_view_product.dart';
-import 'package:yourbae_project/view_model/tab_button.dart';
-
-import '../model/product_model.dart';
+import '../controller/controller.dart';
+import '../controller/firebase_controller.dart';
+import '../model/user_model.dart';
+import '../view_model/tab_button.dart';
 import '../view_model/single_product.dart';
 
 class MainView extends StatelessWidget {
+  const MainView({super.key, required this.userModel});
+  final UserModel? userModel;
+
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final auth = FirebaseAuth.instance.currentUser!.uid;
     var controller = Get.put(Controller());
-    Query<Product> products = firestore
-        .collection('product')
-        .withConverter<Product>(
-            fromFirestore: (snapshot, _) => Product.fromJson(snapshot.data()),
-            toFirestore: (product, _) => product.toJson());
+    var firebaseController = Get.put(FirebaseController());
+
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 10.h,
@@ -41,34 +35,26 @@ class MainView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Delivery Addres',
+                      'Hallo, ${userModel?.name}',
                       style: GoogleFonts.poppins(
-                          fontSize: 14.sp, color: Colors.grey),
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
                     ),
                     Text(
-                      'Jl.Pagarsih',
+                      'Apa Kabarmu Hari Ini?',
                       style: GoogleFonts.poppins(
-                          fontSize: 14.sp, color: Colors.black),
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
                     )
                   ],
                 ),
-                // SizedBox(
-                //     height: 50.h,
-                //     width: 50.w,
-                //     child: ElevatedButton(
-                //       style: ElevatedButton.styleFrom(
-                //           elevation: 0,
-                //           backgroundColor: Colors.white,
-                //           shape: RoundedRectangleBorder(
-                //               side:
-                //                   BorderSide(color: Colors.grey, width: 1.5.r),
-                //               borderRadius: BorderRadius.circular(15).r)),
-                //       onPressed: () {},
-                //       child: Icon(
-                //         CupertinoIcons.search,
-                //         color: Colors.black,
-                //       ),
-                //     ))
+                CircleAvatar(
+                  minRadius: 30.r,
+                  backgroundImage: NetworkImage(userModel?.imageProfile ??
+                      'https://www.its.ac.id/aktuaria/wp-content/uploads/sites/100/2018/03/user-320x320.png'),
+                ),
               ],
             ),
             SizedBox(
@@ -77,7 +63,7 @@ class MainView extends StatelessWidget {
             Text(
               'Brands',
               style: GoogleFonts.poppins(
-                  fontSize: 20.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
             ),
@@ -90,7 +76,8 @@ class MainView extends StatelessWidget {
             ),
             Obx(
               () => StreamBuilder(
-                  stream: products
+                  stream: firebaseController
+                      .queryProduct()
                       .orderBy('nameProduct', descending: false)
                       .where('category', isEqualTo: controller.category.value)
                       .snapshots(),
@@ -130,7 +117,7 @@ class MainView extends StatelessWidget {
                                   gridDelegate:
                                       SliverGridDelegateWithMaxCrossAxisExtent(
                                           maxCrossAxisExtent: 200,
-                                          childAspectRatio: 3 / 4.5.r,
+                                          childAspectRatio: 3 / 5.r,
                                           crossAxisSpacing: 20.r,
                                           mainAxisSpacing: 5.r),
                                   itemBuilder: (context, index) =>

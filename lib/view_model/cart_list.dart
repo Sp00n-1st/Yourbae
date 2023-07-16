@@ -1,20 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:yourbae_project/model/product_model.dart';
-import 'package:yourbae_project/view/checkout.dart';
-import 'package:yourbae_project/view_model/single_cart.dart';
-import 'package:yourbae_project/view_model/single_product.dart';
+import '../model/product_model.dart';
+import '../view/checkout.dart';
+import '../view_model/single_cart.dart';
 import '../model/cart_model.dart';
 
-// ignore: must_be_immutable
 class CartList extends StatelessWidget {
-  CartModel? cartModel;
-  CartList({required this.cartModel});
+  const CartList({super.key, required this.cartModel, required this.id});
+  final CartModel? cartModel;
+  final String id;
+
   @override
   Widget build(BuildContext context) {
     List<Widget> listProduct = <Widget>[];
@@ -22,8 +21,6 @@ class CartList extends StatelessWidget {
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
     final firebase = FirebaseFirestore.instance;
-    final order = firebase.collection('order');
-    final cart = firebase.collection('cart');
     num totalAll = 0;
 
     for (int i = 0; i < cartModel!.idProduct.length; i++) {
@@ -64,7 +61,7 @@ class CartList extends StatelessWidget {
           children: [
             Container(
               color: Colors.grey.shade200,
-              margin: EdgeInsets.fromLTRB(0, 20, 0, 0).r,
+              margin: const EdgeInsets.fromLTRB(0, 20, 0, 0).r,
               width: sizeWidth,
               height: 430.h,
               child: SingleChildScrollView(
@@ -76,7 +73,7 @@ class CartList extends StatelessWidget {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 0, 30).r,
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 30).r,
                 width: sizeWidth,
                 height: sizeHeight * 0.099,
                 color: Colors.grey.shade200,
@@ -91,51 +88,10 @@ class CartList extends StatelessWidget {
                       backgroundColor: Colors.green,
                       onPressed: () async {
                         Get.to(Checkout(
-                            cartModel: cartModel!, totalAll: totalAll));
-                        // showDialog(
-                        //   context: context,
-                        //   builder: (context) {
-                        //     return CupertinoAlertDialog(
-                        //       title: const Text('Are You Sure To Checkout ?'),
-                        //       actions: [
-                        //         MaterialButton(
-                        //           onPressed: () async {
-                        //             // print(available);
-                        //             // final now = DateTime.now();
-                        //             // final date = DateFormat('yyyyMMddHHmmss')
-                        //             //     .format(now);
-                        //             // await order.add(({
-                        //             //   'uid_user': cartModel!.uidUser,
-                        //             //   'time': int.tryParse(date),
-                        //             //   'id_product': cartModel!.idProduct,
-                        //             //   'qty': cartModel!.qty,
-                        //             //   'subTotal': cartModel!.subTotal,
-                        //             //   'isTake': false,
-                        //             //   'isReady': false,
-                        //             //   'date': DateTime.now(),
-                        //             //   'available': available
-                        //             // }));
-                        //             // minusStock(
-                        //             //     cartModel!.idProduct, cartModel!.qty);
-                        //             // cart.doc(cartModel!.uidUser).delete();
-                        //             // Navigator.pop(context);
-                        //             Get.to(Checkout(
-                        //               cartModel: cartModel!,
-                        //               totalAll: totalAll,
-                        //             ));
-                        //           },
-                        //           child: const Text('Yes'),
-                        //         ),
-                        //         MaterialButton(
-                        //           onPressed: () {
-                        //             Navigator.pop(context);
-                        //           },
-                        //           child: const Text('No'),
-                        //         )
-                        //       ],
-                        //     );
-                        //   },
-                        // );
+                          cartModel: cartModel!,
+                          totalAll: totalAll,
+                          id: id,
+                        ));
                       },
                       child: const Icon(
                         Icons.shopping_basket_outlined,

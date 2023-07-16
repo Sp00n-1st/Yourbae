@@ -7,14 +7,16 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:intl/intl.dart';
-import 'package:yourbae_project/view/home.dart';
-import 'package:yourbae_project/view/login.dart';
-
+import '../controller/notification_controller.dart';
+import '../view/home.dart';
+import '../view/login.dart';
 import 'controller.dart';
 
 class AuthController extends GetxController {
   var controller = Get.put(Controller());
+  var controllerNotification = Get.put(NotificationController());
   var isLogin = false.obs;
+  var isDisable = false.obs;
 
   Future<void> loginAuth(
       BuildContext context, String email, String password) async {
@@ -25,14 +27,16 @@ class AuthController extends GetxController {
         FirebaseFirestore.instance.collection('user').doc(auth.uid);
     var querySnapshot = await collection.get();
     Map<String, dynamic>? data = querySnapshot.data();
-    var name = data!['name'];
-    var isDisable = data['isDisable'];
+    var isDisable = data!['isDisable'];
     if (isDisable == false) {
       if (auth.emailVerified == true) {
-        collection.update(({'isLogin': true}));
-        Get.offAll(Home());
+        collection.update(({
+          'isLogin': true,
+          'token': await controllerNotification.getToken()
+        }));
+        Get.offAll(const Home());
         isLogin.value = !isLogin.value;
-        showToast('Hello $name You Are Login Now',
+        showToast('Login Sukses',
             position: const ToastPosition(align: Alignment.bottomCenter),
             backgroundColor: const Color(0xff00AA13));
       } else if (auth.emailVerified == false) {
@@ -46,7 +50,7 @@ class AuthController extends GetxController {
         builder: (context) {
           return CupertinoAlertDialog(
             title: Text(
-              'You can\'t login because you\'ve been banned',
+              'Anda Tidak Bisa Login Karena Akun Anda Telah Diblokir',
               style: GoogleFonts.poppins(fontSize: 18),
             ),
             content: Column(
@@ -57,14 +61,17 @@ class AuthController extends GetxController {
                   size: 80,
                 ),
                 Text(
-                  'Contact Sweet Dream customer service for more information',
+                  'Hubungi Customer Service Yourbae Untuk Info Lebih Lanjut',
                   style: GoogleFonts.poppins(fontSize: 14),
                 )
               ],
             ),
             actions: [
               MaterialButton(
-                  child: const Text('OK'),
+                  child: Text(
+                    'OK',
+                    style: GoogleFonts.poppins(),
+                  ),
                   onPressed: () {
                     logoutAuth(false);
                   })
@@ -82,7 +89,7 @@ class AuthController extends GetxController {
     var collection = FirebaseFirestore.instance.collection('user').doc(auth);
     await FirebaseAuth.instance.signOut();
     collection.update(({'isLogin': false, 'lastLogin': date}));
-    Get.offAll(Login());
+    Get.offAll(const Login());
     isShowToast == true
         ? showToast('You Are Logout',
             position: const ToastPosition(align: Alignment.bottomCenter))
@@ -123,7 +130,8 @@ class AuthController extends GetxController {
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green, shape: StadiumBorder()),
+                        backgroundColor: Colors.green,
+                        shape: const StadiumBorder()),
                     child: Text(
                       'Kirim Ulang',
                       style: GoogleFonts.poppins(),
@@ -144,5 +152,24 @@ class AuthController extends GetxController {
         );
       },
     );
+  }
+
+  void resetPassword(BuildContext context, String email) async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: email)
+          .then((value) => {
+                Navigator.pop(context),
+                showToast('Email Reset Password Telah Dikirim',
+                    textStyle: GoogleFonts.poppins(color: Colors.white),
+                    position:
+                        const ToastPosition(align: Alignment.bottomCenter))
+              });
+    } on FirebaseAuthException catch (e) {
+      showToast(e.message.toString(),
+          duration: const Duration(seconds: 5),
+          textStyle: GoogleFonts.poppins(color: Colors.white),
+          position: const ToastPosition(align: Alignment.bottomCenter));
+    }
   }
 }

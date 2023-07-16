@@ -1,17 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yourbae_project/controller/auth_controller.dart';
-import 'package:yourbae_project/controller/controller.dart';
-import 'package:yourbae_project/view/home.dart';
-import 'package:yourbae_project/view/main_view.dart';
+import '../controller/auth_controller.dart';
+import '../controller/controller.dart';
 import '../view_model/input_box.dart';
-import 'register.dart';
-import '../view_model/custom_button.dart';
 import '../view_model/custom_button_auth.dart';
+import 'register.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -20,11 +18,12 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController password = TextEditingController();
-    var authController = Get.put(AuthController());
-    var controller = Get.put(Controller());
-
+    TextEditingController emailResetPass = TextEditingController();
+    AuthController authController = Get.put(AuthController());
+    Controller controller = Get.put(Controller());
+    FlutterNativeSplash.remove();
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           SizedBox(
@@ -86,8 +85,69 @@ class Login extends StatelessWidget {
                         margin: const EdgeInsets.fromLTRB(0, 0, 42, 0).r,
                         child: TextButton(
                             onPressed: () {
-                              authController.isLogin.value =
-                                  !authController.isLogin.value;
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return CupertinoAlertDialog(
+                                    title: Text(
+                                      'Reset Password ?',
+                                      style: GoogleFonts.poppins(),
+                                    ),
+                                    content: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 10.h,
+                                        ),
+                                        Text(
+                                          'Masukkan Email Yang Terdaftar',
+                                          style: GoogleFonts.poppins(),
+                                        ),
+                                        SizedBox(
+                                          height: 10.h,
+                                        ),
+                                        Material(
+                                          borderRadius:
+                                              BorderRadius.circular(15.r),
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                    10, 0, 10, 0)
+                                                .r,
+                                            child: TextField(
+                                              controller: emailResetPass,
+                                              keyboardType:
+                                                  TextInputType.emailAddress,
+                                              decoration: const InputDecoration(
+                                                  border: InputBorder.none),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            authController.resetPassword(
+                                                context, emailResetPass.text);
+                                          },
+                                          child: Text(
+                                            'OK',
+                                            style: GoogleFonts.poppins(
+                                                color: Colors.black),
+                                          )),
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(
+                                            'Batal',
+                                            style: GoogleFonts.poppins(
+                                                color: Colors.black),
+                                          ))
+                                    ],
+                                  );
+                                },
+                              );
+                              !authController.isLogin.value;
                             },
                             child: Text(
                               'Reset Password',
@@ -106,7 +166,7 @@ class Login extends StatelessWidget {
                         ? SizedBox(
                             width: 50.w,
                             height: 50.h,
-                            child: CircularProgressIndicator(
+                            child: const CircularProgressIndicator(
                               color: Colors.white,
                               backgroundColor: Colors.black,
                             ),
@@ -133,63 +193,6 @@ class Login extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/line1.png',
-                          fit: BoxFit.contain,
-                        ),
-                        SizedBox(
-                          width: 6.w,
-                        ),
-                        SizedBox(
-                          height: 20.h,
-                          width: 150.w,
-                          child: Text(
-                            'Atau Lanjut Dengan',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w300,
-                                color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 6.w,
-                        ),
-                        Image.asset(
-                          'assets/line2.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 32.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomButton(
-                          image: 'fb',
-                        ),
-                        SizedBox(
-                          width: 16.w,
-                        ),
-                        CustomButton(
-                          image: 'google',
-                        ),
-                        SizedBox(
-                          width: 16.w,
-                        ),
-                        CustomButton(
-                          image: 'twitter',
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 28.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
                         Text(
                           'Belum Register?',
                           style: GoogleFonts.poppins(
@@ -199,7 +202,7 @@ class Login extends StatelessWidget {
                         ),
                         TextButton(
                             onPressed: () {
-                              Get.to(Register());
+                              Get.to(const Register());
                             },
                             child: Text(
                               'Register Sekarang',

@@ -1,11 +1,7 @@
-import 'dart:convert';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:yourbae_project/controller/alamat_controller.dart';
-
-import '../controller/alamat_controller.dart';
 import '../model/province_model.dart';
 
 class Provinsi extends GetView<AlamatController> {
@@ -15,7 +11,7 @@ class Provinsi extends GetView<AlamatController> {
 
   @override
   Widget build(BuildContext context) {
-    var alamatController = Get.put(AlamatController());
+    AlamatController alamatController = Get.put(AlamatController());
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: DropdownSearch<Province>(
@@ -29,7 +25,7 @@ class Provinsi extends GetView<AlamatController> {
             alamatController.cost.value = 0;
             alamatController.namaProvinsi.value = prov.province!;
             Future.delayed(
-              Duration(milliseconds: 10),
+              const Duration(milliseconds: 10),
               () {
                 alamatController.hiddenKotaTujuan.value = false;
                 alamatController.hiddenRadio.value = true;

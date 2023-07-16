@@ -4,20 +4,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// ignore: must_be_immutable
 class InputBox extends StatelessWidget {
-  InputBox({
+  const InputBox({
     Key? key,
     required this.isPassword,
     required this.hintText,
     required this.textController,
   }) : super(key: key);
-  bool isPassword;
-  String hintText;
-  TextEditingController textController;
+  final bool isPassword;
+  final String hintText;
+  final TextEditingController textController;
+
   @override
   Widget build(BuildContext context) {
-    var isShowPassword = false.obs;
+    RxBool isShowPassword = false.obs;
+
     return Container(
       width: 277.w,
       height: 60.h,
@@ -30,6 +31,10 @@ class InputBox extends StatelessWidget {
       child: Center(
         child: Obx(
           () => TextField(
+            cursorHeight: 22.h,
+            textCapitalization: isPassword
+                ? TextCapitalization.none
+                : TextCapitalization.sentences,
             keyboardType: isPassword ? null : TextInputType.emailAddress,
             obscureText: (!isShowPassword.value && isPassword) ? true : false,
             style: GoogleFonts.poppins(fontSize: 18),

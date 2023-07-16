@@ -4,26 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:yourbae_project/model/cart_model.dart';
-import 'package:yourbae_project/model/product_model.dart';
 import 'package:intl/intl.dart';
+import '../model/cart_model.dart';
+import '../model/product_model.dart';
 
 class SingleCart extends StatelessWidget {
-  SingleCart(
+  const SingleCart(
       {Key? key,
       required this.product,
       required this.cartModel,
       required this.index,
       required this.isShowDelete})
       : super(key: key);
-  Product product;
-  CartModel cartModel;
-  int index;
-  bool isShowDelete;
+  final Product product;
+  final CartModel cartModel;
+  final int index;
+  final bool isShowDelete;
+
   @override
   Widget build(BuildContext context) {
-    final firebase = FirebaseFirestore.instance;
-    final cart = firebase.collection('cart').doc(cartModel.uidUser);
+    FirebaseFirestore firebase = FirebaseFirestore.instance;
+    DocumentReference<Map<String, dynamic>> cart =
+        firebase.collection('cart').doc(cartModel.uidUser);
+
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 20).r,
       width: 315.w,
@@ -38,7 +41,7 @@ class SingleCart extends StatelessWidget {
           SizedBox(
               height: 70.h,
               width: 100.w,
-              child: Image.network(product.imageUrl)),
+              child: Image.network(product.imageUrl.elementAt(0))),
           SizedBox(
             width: 15.w,
           ),
@@ -138,7 +141,7 @@ class SingleCart extends StatelessWidget {
                               child: const Icon(Icons.delete)),
                         ),
                       )
-                    : SizedBox()
+                    : const SizedBox()
               ],
             ),
           ),

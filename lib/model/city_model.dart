@@ -36,7 +36,7 @@ class City {
   }
 
   static List<City> fromJsonList(List list) {
-    if (list.length == 0) return List<City>.empty();
+    if (list.isEmpty) return List<City>.empty();
     return list.map((item) => City.fromJson(item)).toList();
   }
 }

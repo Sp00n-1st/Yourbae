@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../controller/alamat_controller.dart';
 
 class RadioButtonKurir extends StatelessWidget {
-  RadioButtonKurir({Key? key, required this.qty}) : super(key: key);
-  int qty;
+  const RadioButtonKurir({Key? key, required this.qty}) : super(key: key);
+  final int qty;
+
   @override
   Widget build(BuildContext context) {
-    var alamatController = Get.put(AlamatController());
+    AlamatController alamatController = Get.put(AlamatController());
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -26,7 +29,10 @@ class RadioButtonKurir extends StatelessWidget {
                 },
               ),
             ),
-            const Text('JNE'),
+            Text(
+              'JNE',
+              style: GoogleFonts.poppins(color: Colors.black),
+            ),
           ],
         ),
         Row(
@@ -44,7 +50,8 @@ class RadioButtonKurir extends StatelessWidget {
                 },
               ),
             ),
-            const Text('Pos Indonesia'),
+            Text('Pos Indonesia',
+                style: GoogleFonts.poppins(color: Colors.black)),
           ],
         ),
       ],

@@ -5,11 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:yourbae_project/controller/controller.dart';
 import 'package:yourbae_project/model/cart_model.dart';
 import 'package:intl/intl.dart';
 import 'package:yourbae_project/view/home.dart';
-import 'package:yourbae_project/view/main_view.dart';
 import 'package:yourbae_project/view_model/kurir.dart';
 import '../controller/alamat_controller.dart';
 import '../model/product_model.dart';
@@ -19,22 +17,30 @@ import '../view_model/radio_button_kurir.dart';
 import '../view_model/single_cart.dart';
 
 class Checkout extends StatelessWidget {
-  Checkout({super.key, required this.cartModel, required this.totalAll});
-  CartModel cartModel;
-  num totalAll;
+  const Checkout(
+      {super.key,
+      required this.cartModel,
+      required this.totalAll,
+      required this.id});
+  final CartModel cartModel;
+  final num totalAll;
+  final String id;
 
   @override
   Widget build(BuildContext context) {
     TextEditingController alamatTextController = TextEditingController();
     List<Widget> listProduct = <Widget>[];
     List<bool?> available = <bool?>[];
+    List<bool> isRating = <bool>[];
     int totalQty = 0;
     String alamat = '';
-    final firebase = FirebaseFirestore.instance;
-    var alamatController = Get.put(AlamatController());
-    var controller = Get.put(Controller());
-    var order = firebase.collection('order');
-    var isLoading = false.obs;
+    FirebaseFirestore firebase = FirebaseFirestore.instance;
+    AlamatController alamatController = Get.put(AlamatController());
+    CollectionReference<Map<String, dynamic>> order =
+        firebase.collection('order');
+    DocumentReference<Map<String, dynamic>> cart =
+        firebase.collection('cart').doc(id);
+    RxBool isLoading = false.obs;
 
     for (int i = 0; i < cartModel.idProduct.length; i++) {
       final product = firebase
@@ -140,7 +146,7 @@ class Checkout extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20).r,
                 width: double.infinity,
-                height: 115.h,
+                height: 121.h,
                 color: Colors.grey.shade200,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,6 +222,11 @@ class Checkout extends StatelessWidget {
                         height: 50.h,
                         child: ElevatedButton(
                           onPressed: () async {
+                            for (int i = 0;
+                                i < cartModel.idProduct.length;
+                                i++) {
+                              isRating.add(false);
+                            }
                             if (alamatTextController.text.isEmpty ||
                                 alamatController.kotaTujuanId.value == 0 ||
                                 alamatController.kurir.value.isEmpty ||
@@ -241,13 +252,18 @@ class Checkout extends StatelessWidget {
                                     totalAll + alamatController.cost.value,
                                 'time': cartModel.time,
                                 'isPay': cartModel.isPay,
+                                'isConfirm': false,
+                                'isRating': isRating,
                                 'alamat': alamat,
+                                'service':
+                                    '${alamatController.kurir.toUpperCase()} - ${alamatController.service}',
                                 'buktiBayar': '',
                                 'timeStamp': DateTime.now()
                               }))
-                                  .then((value) {
+                                  .then((value) async {
+                                await cart.delete();
                                 isLoading.value = false;
-                                Get.offAll(Home());
+                                Get.offAll(const Home());
                                 showDialog(
                                   context: context,
                                   builder: (context) {
@@ -280,12 +296,6 @@ class Checkout extends StatelessWidget {
                                     );
                                   },
                                 );
-                                // Future.delayed(
-                                //   Duration(seconds: 2),
-                                //   () {
-                                //     Get.offAll(Home());
-                                //   },
-                                // );
                               });
                             }
                           },
@@ -303,26 +313,6 @@ class Checkout extends StatelessWidget {
               SizedBox(
                 height: 10.h,
               )
-
-              // Obx(
-              //   () => SizedBox(
-              //     width: double.infinity,
-              //     child: ElevatedButton(
-              //       onPressed: alamatController.hiddenButton.isTrue
-              //           ? null
-              //           : () {
-              //               alamatController.ongkosKirim();
-              //               // print(alamatController.kotaTujuanId);
-              //               // print(alamatController.provTujuanId);
-              //             },
-              //       child: Text("SAVE"),
-              //       style: ElevatedButton.styleFrom(
-              //         padding: EdgeInsets.symmetric(vertical: 20),
-              //         backgroundColor: Colors.blue[900],
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

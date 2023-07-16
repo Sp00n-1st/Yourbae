@@ -2,28 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:yourbae_project/controller/controller.dart';
-import 'package:yourbae_project/model/product_model.dart';
 import 'package:intl/intl.dart';
-import 'package:yourbae_project/view/home.dart';
-
+import '../controller/controller.dart';
+import '../model/product_model.dart';
+import '../view/home.dart';
 import '../model/cart_model.dart';
+import '../model/rating_model.dart';
+import '../view_model/single_rating.dart';
 
 class ProductDetail extends StatefulWidget {
   @override
-  _ProductDetailState createState() => _ProductDetailState();
-  ProductDetail({super.key, required this.product, required this.id});
-  Product product;
-  String id;
+  ProductDetailState createState() => ProductDetailState();
+  const ProductDetail({super.key, required this.product, required this.id});
+  final Product product;
+  final String id;
 }
 
-class _ProductDetailState extends State<ProductDetail>
+class ProductDetailState extends State<ProductDetail>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  var controller = Get.put(Controller());
+  final auth = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -33,18 +37,34 @@ class _ProductDetailState extends State<ProductDetail>
 
   @override
   void dispose() {
+    controller.dispose();
     _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuth.instance.currentUser!.uid;
-    var controller = Get.put(Controller());
     var qty = 1.obs;
     var stok = 0.obs;
     var subTotal = (qty.value * widget.product.price).obs;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    Query<RatingModel> rating = firestore
+        .collection('rating')
+        .withConverter<RatingModel>(
+            fromFirestore: (snapshot, _) =>
+                RatingModel.fromJson(snapshot.data()),
+            toFirestore: (ratingModel, _) => ratingModel.toJson());
     controller.selectedSize.value = 0;
+    List<Widget> listImage = <Widget>[];
+
+    for (int i = 0; i < widget.product.imageUrl.length; i++) {
+      listImage.add(
+        Image.network(
+          widget.product.imageUrl.elementAt(i),
+          fit: BoxFit.contain,
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -61,21 +81,19 @@ class _ProductDetailState extends State<ProductDetail>
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 20.h,
-          ),
           Center(
               child: Column(
             children: [
               SizedBox(
-                  width: 100.w,
-                  height: 100.h,
-                  child: Image.network(
-                    widget.product.imageUrl,
-                    fit: BoxFit.fill,
-                  )),
+                width: 200.w,
+                height: 150.h,
+                child: ImageSlideshow(
+                  indicatorBackgroundColor: Colors.white,
+                  children: listImage,
+                ),
+              ),
               SizedBox(
-                height: 80.h,
+                height: 10.h,
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
@@ -89,7 +107,7 @@ class _ProductDetailState extends State<ProductDetail>
                   children: [
                     Text(
                       widget.product.nameProduct,
-                      maxLines: 2,
+                      maxLines: 3,
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
@@ -407,9 +425,10 @@ class _ProductDetailState extends State<ProductDetail>
                         tabs: [
                           Tab(
                             child: Text(
-                              'Product Description',
+                              'Detail Produk',
+                              maxLines: 1,
                               style: GoogleFonts.poppins(
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black),
                             ),
@@ -417,8 +436,9 @@ class _ProductDetailState extends State<ProductDetail>
                           Tab(
                             child: Text(
                               'Rating',
+                              maxLines: 1,
                               style: GoogleFonts.poppins(
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black),
                             ),
@@ -439,28 +459,58 @@ class _ProductDetailState extends State<ProductDetail>
                   padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 0),
                   width: double.infinity,
                   color: Colors.white,
-                  child: Text(
-                    widget.product.descItem,
-                    style: GoogleFonts.poppins(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black),
-                  ),
-                ),
-                SingleChildScrollView(
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(20.r, 0, 20.r, 0),
-                    width: double.infinity,
-                    color: Colors.white,
+                  child: SingleChildScrollView(
                     child: Text(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet faucibus commodo tellus lectus lobortis. Ultricies lacus, facilisis arcu ac mauris, laoreet sit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet faucibus commodo tellus lectus lobortis. Ultricies lacus, facilisis arcu ac mauris, laoreet sit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet faucibus commodo tellus lectus lobortis. Ultricies lacus, facilisis arcu ac mauris, laoreet sit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet faucibus commodo tellus lectus lobortis. Ultricies lacus, facilisis arcu ac mauris, laoreet sit.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet faucibus commodo tellus lectus lobortis. Ultricies lacus, facilisis arcu ac mauris, laoreet sit.',
+                      widget.product.descItem,
+                      textAlign: TextAlign.justify,
                       style: GoogleFonts.poppins(
-                          fontSize: 15.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.black),
                     ),
                   ),
                 ),
+                Container(
+                  color: Colors.white,
+                  child: StreamBuilder(
+                      stream: rating
+                          .where('idProduct', isEqualTo: widget.id)
+                          .orderBy('createdAt', descending: false)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Center(
+                            child: Text('Error'),
+                          );
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: SizedBox(
+                              width: 50.w,
+                              height: 50.h,
+                              child: const CircularProgressIndicator(),
+                            ),
+                          );
+                        } else if (snapshot.data!.docs.isEmpty) {
+                          return Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 0, 20, 0).r,
+                              child: Text(
+                                'Belum Cukup Rating',
+                                style: GoogleFonts.poppins(fontSize: 16.sp),
+                              ));
+                        }
+                        return ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            return SingleRating(
+                              ratingModel:
+                                  snapshot.data!.docs.elementAt(index).data(),
+                            );
+                          },
+                        );
+                      }),
+                )
               ],
             ),
           ),
@@ -471,15 +521,15 @@ class _ProductDetailState extends State<ProductDetail>
 }
 
 class TabSize extends StatelessWidget {
-  TabSize(
+  const TabSize(
       {Key? key,
       required this.onPressed,
       required this.size,
       required this.stok})
       : super(key: key);
+  final int stok, size;
+  final VoidCallback onPressed;
 
-  int stok, size;
-  VoidCallback onPressed;
   @override
   Widget build(BuildContext context) {
     var controller = Get.put(Controller());
@@ -514,7 +564,10 @@ add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: const Text('Item Sudah Ada Dikeranjang!'),
+          title: Text(
+            'Item Sudah Ada Dikeranjang!',
+            style: GoogleFonts.poppins(color: Colors.black),
+          ),
           content: Column(
             children: [
               const Icon(
@@ -522,8 +575,9 @@ add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
                 size: 70,
                 color: Colors.red,
               ),
-              const Text(
-                  'Item Tidak Bisa Ditambahkan Ke Keranjang Karena Sudah Ada Di Keranjang'),
+              Text(
+                  'Item Tidak Bisa Ditambahkan Ke Keranjang Karena Sudah Ada Di Keranjang',
+                  style: GoogleFonts.poppins(color: Colors.black)),
             ],
           ),
           actions: [
@@ -531,7 +585,8 @@ add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('OK'),
+              child:
+                  Text('OK', style: GoogleFonts.poppins(color: Colors.black)),
             )
           ],
         );
@@ -542,14 +597,14 @@ add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
     qtyStorage.add(qty);
     subTotalStorage.add(subTotal);
     sizeStorage.add(size);
-
     await addToStorage(uidUser, timeStorage, idProductStorage, qtyStorage,
         sizeStorage, subTotalStorage, isCheckout, isPay, auth);
     showDialog(
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: const Text('Item Sudah Ditambahkan Ke Keranjang'),
+          title: Text('Item Sudah Ditambahkan Ke Keranjang',
+              style: GoogleFonts.poppins(color: Colors.black)),
           content: const Icon(
             CupertinoIcons.cart_badge_plus,
             size: 70,
@@ -557,7 +612,7 @@ add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
           actions: [
             MaterialButton(
               onPressed: () {
-                Get.offAll(Home());
+                Get.offAll(const Home());
               },
               child: const Text('OK'),
             )
@@ -579,7 +634,7 @@ addFirst(num subTotal, num qty, String idProduct, int size, String auth,
 
   await FirebaseFirestore.instance.collection('cart').doc(auth).set(({
         'uidUser': auth,
-        'time': date,
+        'time': int.parse(date),
         'idProduct': idProductStorage,
         'qty': qtyStorage,
         'size': sizeStorage,
@@ -591,7 +646,8 @@ addFirst(num subTotal, num qty, String idProduct, int size, String auth,
     context: context,
     builder: (context) {
       return CupertinoAlertDialog(
-        title: const Text('Item Sudah Ditambahkan Ke Keranjang'),
+        title: Text('Item Sudah Ditambahkan Ke Keranjang',
+            style: GoogleFonts.poppins(color: Colors.black)),
         content: const Icon(
           CupertinoIcons.cart_badge_plus,
           size: 70,
@@ -599,7 +655,7 @@ addFirst(num subTotal, num qty, String idProduct, int size, String auth,
         actions: [
           MaterialButton(
             onPressed: () {
-              Get.offAll(Home());
+              Get.offAll(const Home());
             },
             child: const Text('OK'),
           )

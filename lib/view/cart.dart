@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yourbae_project/view_model/cart_list.dart';
-
+import '../view_model/cart_list.dart';
 import '../model/cart_model.dart';
-import '../view_model/single_cart.dart';
 
 class Cart extends StatelessWidget {
+  const Cart({super.key});
+
   @override
   Widget build(BuildContext context) {
     final auth = FirebaseAuth.instance.currentUser!;
@@ -59,7 +57,10 @@ class Cart extends StatelessWidget {
                         fit: BoxFit.contain,
                       ));
                 }
-                return CartList(cartModel: snapshot.data!.data());
+                return CartList(
+                  cartModel: snapshot.data!.data(),
+                  id: snapshot.data!.id,
+                );
               })),
     );
   }

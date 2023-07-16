@@ -6,6 +6,7 @@ class CartModel {
   List<int> size;
   List<num> subTotal;
   bool isCheckout, isPay;
+
   CartModel(
       {required this.uidUser,
       required this.idProduct,

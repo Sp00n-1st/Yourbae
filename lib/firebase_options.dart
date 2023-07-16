@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAlEA_ANvY6v5mI_TZ70WeMnb-VZ1_Z4uU',
-    appId: '1:1012730884843:android:45786c88ef378fb91a44ae',
+    appId: '1:1012730884843:android:b64f59405ea855061a44ae',
     messagingSenderId: '1012730884843',
     projectId: 'yourbae-11be4',
     storageBucket: 'yourbae-11be4.appspot.com',
@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCPL9gLXt5D5TbEbpqFl1Ds_Fu771hCeRk',
-    appId: '1:1012730884843:ios:6e9bff1ec15c9fb21a44ae',
+    appId: '1:1012730884843:ios:bd75b97abb3fbd321a44ae',
     messagingSenderId: '1012730884843',
     projectId: 'yourbae-11be4',
     storageBucket: 'yourbae-11be4.appspot.com',
-    iosClientId: '1012730884843-plmbm24he0l2ugcdvdjesha79n0225vn.apps.googleusercontent.com',
-    iosBundleId: 'com.example.yourbaeProject',
+    iosClientId: '1012730884843-r7fvf65k7s07ia7c59q7079cde7bkpl9.apps.googleusercontent.com',
+    iosBundleId: 'io.flutter.plugins.firebase.messaging',
   );
 }

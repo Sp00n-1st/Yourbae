@@ -1,25 +1,19 @@
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/view_model/kurir.dart';
-
 import '../controller/alamat_controller.dart';
-import '../view_model/alamat.dart';
 import '../view_model/city.dart';
 import '../view_model/province.dart';
 
 class InputAlamat extends StatelessWidget {
+  const InputAlamat({super.key});
+
   @override
   Widget build(BuildContext context) {
-    var alamatController = Get.put(AlamatController());
-
-    List<String> options = ['JNE', 'Pos Indonesia'];
-
-    var category = 'jne'.obs;
-
-    var selectedOption = Rxn<String>();
+    AlamatController alamatController = Get.put(AlamatController());
 
     return Scaffold(
       appBar: AppBar(
@@ -27,12 +21,12 @@ class InputAlamat extends StatelessWidget {
           onPressed: () {
             Get.back();
           },
-          icon: Icon(CupertinoIcons.back),
+          icon: const Icon(CupertinoIcons.back),
           color: Colors.black,
         ),
         title: Text(
           'Input Alamat',
-          style: TextStyle(color: Colors.black),
+          style: GoogleFonts.poppins(color: Colors.black),
         ),
         backgroundColor: Colors.transparent,
         centerTitle: true,
@@ -44,22 +38,23 @@ class InputAlamat extends StatelessWidget {
           children: [
             TextField(
               decoration: InputDecoration(
-                  label: Text('Alamat'), border: OutlineInputBorder()),
+                  label: Text('Alamat', style: GoogleFonts.poppins()),
+                  border: const OutlineInputBorder()),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Provinsi(),
+            const Provinsi(),
             Obx(
               () => alamatController.hiddenKotaTujuan.isTrue
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Column(
                       children: [
                         Kota(
                           provId: alamatController.provTujuanId.value,
                         ),
                         Obx(() => alamatController.hiddenRadio.isTrue
-                            ? SizedBox()
+                            ? const SizedBox()
                             : Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -76,10 +71,13 @@ class InputAlamat extends StatelessWidget {
                                           alamatController.hiddenLoading.value =
                                               false;
                                           alamatController.kurir.value = value!;
-                                          // alamatController.ongkosKirim();
                                         },
                                       ),
-                                      Text('JNE'),
+                                      Text(
+                                        'JNE',
+                                        style: GoogleFonts.poppins(
+                                            color: Colors.black),
+                                      ),
                                     ],
                                   ),
                                   Row(
@@ -94,10 +92,11 @@ class InputAlamat extends StatelessWidget {
                                           alamatController.hiddenLoading.value =
                                               false;
                                           alamatController.kurir.value = value!;
-                                          // alamatController.ongkosKirim();
                                         },
                                       ),
-                                      Text('Pos Indonesia'),
+                                      Text('Pos Indonesia',
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.black)),
                                     ],
                                   ),
                                 ],
@@ -110,32 +109,12 @@ class InputAlamat extends StatelessWidget {
                   ? SizedBox(
                       width: 50.w,
                       height: 50.h,
-                      child: CircularProgressIndicator(),
+                      child: const CircularProgressIndicator(),
                     )
                   : alamatController.hiddenKurir.isTrue
-                      ? SizedBox()
-                      : Kurir(),
+                      ? const SizedBox()
+                      : const Kurir(),
             ),
-
-            // Obx(
-            //   () => SizedBox(
-            //     width: double.infinity,
-            //     child: ElevatedButton(
-            //       onPressed: alamatController.hiddenButton.isTrue
-            //           ? null
-            //           : () {
-            //               alamatController.ongkosKirim();
-            //               // print(alamatController.kotaTujuanId);
-            //               // print(alamatController.provTujuanId);
-            //             },
-            //       child: Text("SAVE"),
-            //       style: ElevatedButton.styleFrom(
-            //         padding: EdgeInsets.symmetric(vertical: 20),
-            //         backgroundColor: Colors.blue[900],
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

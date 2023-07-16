@@ -11,13 +11,12 @@ class BoxCustomPayment extends StatelessWidget {
       required this.totalTagihan,
       required this.label,
       required this.isPaymentAccount,
-      this.bankAccount = 0})
+      this.bankAccount = '',
+      this.nameAccount = ''})
       : super(key: key);
-
   final num totalTagihan;
-  final String label;
+  final String label, bankAccount, nameAccount;
   final bool isPaymentAccount;
-  final int bankAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class BoxCustomPayment extends StatelessWidget {
         isPaymentAccount == true
             ? Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 10).r,
-                child: Text('An. Rey', style: GoogleFonts.poppins()))
+                child: Text('An. $nameAccount', style: GoogleFonts.poppins()))
             : const SizedBox(),
         Container(
           width: double.infinity,
@@ -61,6 +60,7 @@ class BoxCustomPayment extends StatelessWidget {
                 IconButton(
                     onPressed: () {
                       showToast('Berhasil Di Salin',
+                          textStyle: GoogleFonts.poppins(),
                           position: const ToastPosition(
                               align: Alignment.bottomCenter));
                       isPaymentAccount == false
