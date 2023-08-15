@@ -18,10 +18,10 @@ class Product {
 
   Product.fromJson(Map<String, dynamic>? json)
       : this(
-          nameProduct: json!['nameProduct'] as String,
+          nameProduct: json!['name_product'] as String,
           category: json['category'] as String,
-          imageUrl: (json['imageUrl'] as List).cast<String>(),
-          descItem: json['descItem'] as String,
+          imageUrl: (json['image_url'] as List).cast<String>(),
+          descItem: json['desc_item'] as String,
           price: json['price'] as int,
           size37: json['size37'] as int,
           size38: json['size38'] as int,

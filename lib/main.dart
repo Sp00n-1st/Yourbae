@@ -1,30 +1,64 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:oktoast/oktoast.dart';
-import '../controller/auth_controller.dart';
-import '../controller/notification_controller.dart';
-import '../firebase_options.dart';
-import '../view/home.dart';
-import 'view/login.dart';
+import 'package:yourbae_project/view/home.dart';
+import 'package:yourbae_project/view/login.dart';
+import 'controller/auth_controller.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  showNotification(message);
+}
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+void showNotification(RemoteMessage message) async {
+  const channelId = 'my_channel_id';
+  const channelName = 'My Channel';
+
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    channelId,
+    channelName,
+    importance: Importance.max,
+    priority: Priority.max,
+    channelShowBadge: true,
+    showWhen: false,
+  );
+
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    message.notification!.title,
+    message.notification!.body,
+    platformChannelSpecifics,
+    payload: 'Default_Sound',
+  );
+}
 
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  NotificationController notificationController =
-      Get.put(NotificationController());
-  FirebaseMessaging.onBackgroundMessage(
-      notificationController.firebaseMessagingBackgroundHandler);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await FirebaseMessaging.instance
+      .requestPermission(
+          alert: true,
+          badge: true,
+          provisional: false,
+          sound: true,
+          announcement: true,
+          carPlay: true,
+          criticalAlert: true)
+      .then((value) async {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessage.listen(showNotification);
+  });
 
-  if (!kIsWeb) {
-    await notificationController.setupFlutterNotifications();
-  }
   runApp(const MyApp());
 }
 

@@ -31,10 +31,10 @@ class EditController extends GetxController {
     }
     user.doc(auth).update(({
           'name': name,
-          'kodeNegara': kodeNegara,
-          'kodeNomorNegara': kodeNomorNegara,
-          'nomorHP': nomorHP,
-          'imageProfile': imageSave,
+          'country_code': kodeNegara,
+          'country_number_code': kodeNomorNegara,
+          'mobile_number_phone': nomorHP,
+          'image_profile': imageSave,
         }));
     isLoading.value = false;
     Get.back();

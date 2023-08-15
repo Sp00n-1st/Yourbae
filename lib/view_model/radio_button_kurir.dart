@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../controller/alamat_controller.dart';
+import '../controller/address_controller.dart';
 
 class RadioButtonKurir extends StatelessWidget {
   const RadioButtonKurir({Key? key, required this.qty}) : super(key: key);
@@ -9,7 +9,7 @@ class RadioButtonKurir extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AlamatController alamatController = Get.put(AlamatController());
+    AddressController addressController = Get.put(AddressController());
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -19,13 +19,13 @@ class RadioButtonKurir extends StatelessWidget {
             Obx(
               () => Radio(
                 value: 'jne',
-                groupValue: alamatController.kurir.value,
+                groupValue: addressController.kurir.value,
                 onChanged: (value) {
-                  alamatController.hiddenKurir.value = true;
-                  alamatController.hiddenLoading.value = false;
-                  alamatController.kurir.value = value!;
-                  alamatController.cost.value = 0;
-                  alamatController.ongkosKirim(qty);
+                  addressController.hiddenKurir.value = true;
+                  addressController.hiddenLoading.value = false;
+                  addressController.kurir.value = value!;
+                  addressController.cost.value = 0;
+                  addressController.ongkosKirim(qty);
                 },
               ),
             ),
@@ -40,13 +40,13 @@ class RadioButtonKurir extends StatelessWidget {
             Obx(
               () => Radio(
                 value: 'pos',
-                groupValue: alamatController.kurir.value,
+                groupValue: addressController.kurir.value,
                 onChanged: (value) {
-                  alamatController.hiddenKurir.value = true;
-                  alamatController.hiddenLoading.value = false;
-                  alamatController.kurir.value = value!;
-                  alamatController.cost.value = 0;
-                  alamatController.ongkosKirim(qty);
+                  addressController.hiddenKurir.value = true;
+                  addressController.hiddenLoading.value = false;
+                  addressController.kurir.value = value!;
+                  addressController.cost.value = 0;
+                  addressController.ongkosKirim(qty);
                 },
               ),
             ),

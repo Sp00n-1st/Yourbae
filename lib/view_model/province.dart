@@ -1,17 +1,17 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:yourbae_project/controller/alamat_controller.dart';
+import 'package:yourbae_project/controller/address_controller.dart';
 import '../model/province_model.dart';
 
-class Provinsi extends GetView<AlamatController> {
+class Provinsi extends GetView<AddressController> {
   const Provinsi({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    AlamatController alamatController = Get.put(AlamatController());
+    AddressController addressController = Get.put(AddressController());
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: DropdownSearch<Province>(
@@ -20,25 +20,25 @@ class Provinsi extends GetView<AlamatController> {
         onFind: controller.getDataAddress,
         onChanged: (prov) {
           if (prov != null) {
-            alamatController.hiddenKotaTujuan.value = true;
-            alamatController.kurir.value = '';
-            alamatController.cost.value = 0;
-            alamatController.namaProvinsi.value = prov.province!;
+            addressController.hiddenKotaTujuan.value = true;
+            addressController.kurir.value = '';
+            addressController.cost.value = 0;
+            addressController.namaProvinsi.value = prov.province!;
             Future.delayed(
               const Duration(milliseconds: 10),
               () {
-                alamatController.hiddenKotaTujuan.value = false;
-                alamatController.hiddenRadio.value = true;
+                addressController.hiddenKotaTujuan.value = false;
+                addressController.hiddenRadio.value = true;
               },
             );
             controller.provTujuanId.value = int.parse(prov.provinceId!);
           } else {
             controller.hiddenKotaTujuan.value = true;
             controller.provTujuanId.value = 0;
-            alamatController.hiddenKotaTujuan.value = true;
-            alamatController.hiddenRadio.value = true;
-            alamatController.kurir.value = '';
-            alamatController.cost.value = 0;
+            addressController.hiddenKotaTujuan.value = true;
+            addressController.hiddenRadio.value = true;
+            addressController.kurir.value = '';
+            addressController.cost.value = 0;
             controller.kotaTujuanId.value = 0;
           }
 

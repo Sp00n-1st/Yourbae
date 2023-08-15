@@ -27,11 +27,11 @@ class AuthController extends GetxController {
         FirebaseFirestore.instance.collection('user').doc(auth.uid);
     var querySnapshot = await collection.get();
     Map<String, dynamic>? data = querySnapshot.data();
-    var isDisable = data!['isDisable'];
+    var isDisable = data!['is_disable'];
     if (isDisable == false) {
       if (auth.emailVerified == true) {
         collection.update(({
-          'isLogin': true,
+          'is_login': true,
           'token': await controllerNotification.getToken()
         }));
         Get.offAll(const Home());
@@ -88,7 +88,7 @@ class AuthController extends GetxController {
     final auth = FirebaseAuth.instance.currentUser!.uid;
     var collection = FirebaseFirestore.instance.collection('user').doc(auth);
     await FirebaseAuth.instance.signOut();
-    collection.update(({'isLogin': false, 'lastLogin': date}));
+    collection.update(({'is_login': false, 'last_login': date}));
     Get.offAll(const Login());
     isShowToast == true
         ? showToast('You Are Logout',

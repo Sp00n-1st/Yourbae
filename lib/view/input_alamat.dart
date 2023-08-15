@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yourbae_project/view_model/kurir.dart';
-import '../controller/alamat_controller.dart';
+import '../controller/address_controller.dart';
 import '../view_model/city.dart';
 import '../view_model/province.dart';
 
@@ -13,7 +13,7 @@ class InputAlamat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AlamatController alamatController = Get.put(AlamatController());
+    AddressController addressController = Get.put(AddressController());
 
     return Scaffold(
       appBar: AppBar(
@@ -46,14 +46,14 @@ class InputAlamat extends StatelessWidget {
             ),
             const Provinsi(),
             Obx(
-              () => alamatController.hiddenKotaTujuan.isTrue
+              () => addressController.hiddenKotaTujuan.isTrue
                   ? const SizedBox()
                   : Column(
                       children: [
                         Kota(
-                          provId: alamatController.provTujuanId.value,
+                          provId: addressController.provTujuanId.value,
                         ),
-                        Obx(() => alamatController.hiddenRadio.isTrue
+                        Obx(() => addressController.hiddenRadio.isTrue
                             ? const SizedBox()
                             : Row(
                                 mainAxisAlignment:
@@ -64,13 +64,14 @@ class InputAlamat extends StatelessWidget {
                                       Radio(
                                         value: 'jne',
                                         groupValue:
-                                            alamatController.kurir.value,
+                                            addressController.kurir.value,
                                         onChanged: (value) {
-                                          alamatController.hiddenKurir.value =
+                                          addressController.hiddenKurir.value =
                                               true;
-                                          alamatController.hiddenLoading.value =
-                                              false;
-                                          alamatController.kurir.value = value!;
+                                          addressController
+                                              .hiddenLoading.value = false;
+                                          addressController.kurir.value =
+                                              value!;
                                         },
                                       ),
                                       Text(
@@ -85,13 +86,14 @@ class InputAlamat extends StatelessWidget {
                                       Radio(
                                         value: 'pos',
                                         groupValue:
-                                            alamatController.kurir.value,
+                                            addressController.kurir.value,
                                         onChanged: (value) {
-                                          alamatController.hiddenKurir.value =
+                                          addressController.hiddenKurir.value =
                                               true;
-                                          alamatController.hiddenLoading.value =
-                                              false;
-                                          alamatController.kurir.value = value!;
+                                          addressController
+                                              .hiddenLoading.value = false;
+                                          addressController.kurir.value =
+                                              value!;
                                         },
                                       ),
                                       Text('Pos Indonesia',
@@ -105,13 +107,13 @@ class InputAlamat extends StatelessWidget {
                     ),
             ),
             Obx(
-              () => alamatController.hiddenLoading.isFalse
+              () => addressController.hiddenLoading.isFalse
                   ? SizedBox(
                       width: 50.w,
                       height: 50.h,
                       child: const CircularProgressIndicator(),
                     )
-                  : alamatController.hiddenKurir.isTrue
+                  : addressController.hiddenKurir.isTrue
                       ? const SizedBox()
                       : const Kurir(),
             ),

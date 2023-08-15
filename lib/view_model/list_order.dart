@@ -35,7 +35,7 @@ class OrderList extends StatelessWidget {
               return SizedBox();
             }
             return SingleOrder(
-                box1: snapshot.data?['nameProduct'],
+                box1: snapshot.data?['name_product'],
                 box2: orderModel!.size[i].toString(),
                 box3: orderModel!.qty[i].toString(),
                 box4: orderModel!.subTotal[i].toString(),

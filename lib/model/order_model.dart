@@ -27,20 +27,20 @@ class OrderModel {
 
   OrderModel.fromJson(Map<String, dynamic>? json)
       : this(
-          uidUser: json!['uidUser'] as String,
-          alamat: json['alamat'] as String,
-          buktiBayar: json['buktiBayar'] as String,
-          nomorResi: json['nomorResi'] as String,
-          isPay: json['isPay'] as bool,
-          isConfirm: json['isConfirm'] as bool,
-          isRating: (json['isRating'] as List).cast<bool>(),
-          idProduct: (json['idProduct'] as List).cast<String>(),
+          uidUser: json!['uid_user'] as String,
+          alamat: json['address'] as String,
+          buktiBayar: json['proof_of_payment'] as String,
+          nomorResi: json['shipping_number'] as String,
+          isPay: json['is_pay'] as bool,
+          isConfirm: json['is_confirm'] as bool,
+          isRating: (json['is_rating'] as List).cast<bool>(),
+          idProduct: (json['id_product'] as List).cast<String>(),
           qty: (json['qty'] as List).cast<int>(),
           size: (json['size'] as List).cast<int>(),
-          subTotal: (json['subTotal'] as List).cast<num>(),
-          totalTagihan: json['totalTagihan'] as num,
-          ongkosKirim: json['ongkosKirim'] as num,
-          timeStamp: json['timeStamp'] as Timestamp,
+          subTotal: (json['sub_total'] as List).cast<num>(),
+          totalTagihan: json['total'] as num,
+          ongkosKirim: json['shipping_cost'] as num,
+          timeStamp: json['time_stamp'] as Timestamp,
         );
   Map<String, Object?> toJson() {
     return {

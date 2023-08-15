@@ -9,7 +9,7 @@ import 'package:yourbae_project/model/cart_model.dart';
 import 'package:intl/intl.dart';
 import 'package:yourbae_project/view/home.dart';
 import 'package:yourbae_project/view_model/kurir.dart';
-import '../controller/alamat_controller.dart';
+import '../controller/address_controller.dart';
 import '../model/product_model.dart';
 import '../view_model/city.dart';
 import '../view_model/province.dart';
@@ -35,7 +35,7 @@ class Checkout extends StatelessWidget {
     int totalQty = 0;
     String alamat = '';
     FirebaseFirestore firebase = FirebaseFirestore.instance;
-    AlamatController alamatController = Get.put(AlamatController());
+    AddressController addressController = Get.put(AddressController());
     CollectionReference<Map<String, dynamic>> order =
         firebase.collection('order');
     DocumentReference<Map<String, dynamic>> cart =
@@ -108,14 +108,14 @@ class Checkout extends StatelessWidget {
               ),
               const Provinsi(),
               Obx(
-                () => alamatController.hiddenKotaTujuan.isTrue
+                () => addressController.hiddenKotaTujuan.isTrue
                     ? const SizedBox()
                     : Column(
                         children: [
                           Kota(
-                            provId: alamatController.provTujuanId.value,
+                            provId: addressController.provTujuanId.value,
                           ),
-                          Obx(() => alamatController.hiddenRadio.isTrue
+                          Obx(() => addressController.hiddenRadio.isTrue
                               ? const SizedBox()
                               : RadioButtonKurir(
                                   qty: totalQty,
@@ -124,16 +124,16 @@ class Checkout extends StatelessWidget {
                       ),
               ),
               Obx(
-                () => alamatController.hiddenLoading.isFalse
+                () => addressController.hiddenLoading.isFalse
                     ? Container(
                         margin: const EdgeInsets.fromLTRB(0, 20, 0, 0).r,
                         width: 50.w,
                         height: 50.h,
                         child: const CircularProgressIndicator(),
                       )
-                    : alamatController.hiddenKurir.isTrue ||
-                            alamatController.kotaTujuanId.value == 0 ||
-                            alamatController.kurir.value.isEmpty
+                    : addressController.hiddenKurir.isTrue ||
+                            addressController.kotaTujuanId.value == 0 ||
+                            addressController.kurir.value.isEmpty
                         ? const SizedBox()
                         : const Kurir(),
               ),
@@ -185,7 +185,7 @@ class Checkout extends StatelessWidget {
                                 )),
                             Obx(
                               () => Text(
-                                  ': ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(alamatController.cost.value)}',
+                                  ': ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(addressController.cost.value)}',
                                   style: GoogleFonts.poppins()),
                             ),
                           ],
@@ -199,7 +199,7 @@ class Checkout extends StatelessWidget {
                                   style: GoogleFonts.poppins(),
                                 )),
                             Obx(() => Text(
-                                ': ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll + alamatController.cost.value)}',
+                                ': ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll + addressController.cost.value)}',
                                 style: GoogleFonts.poppins())),
                           ],
                         ),
@@ -228,9 +228,9 @@ class Checkout extends StatelessWidget {
                               isRating.add(false);
                             }
                             if (alamatTextController.text.isEmpty ||
-                                alamatController.kotaTujuanId.value == 0 ||
-                                alamatController.kurir.value.isEmpty ||
-                                alamatController.cost.value == 0) {
+                                addressController.kotaTujuanId.value == 0 ||
+                                addressController.kurir.value.isEmpty ||
+                                addressController.cost.value == 0) {
                               showToast(
                                   'Harap Isi Semua Kolom Data Yang Di Perlukan!',
                                   position: const ToastPosition(
@@ -238,29 +238,32 @@ class Checkout extends StatelessWidget {
                             } else {
                               isLoading.value = true;
                               alamat =
-                                  '${alamatTextController.text} ${alamatController.namaKotaKab.value} ${alamatController.namaProvinsi.value}';
+                                  '${alamatTextController.text} ${addressController.namaKotaKab.value} ${addressController.namaProvinsi.value}';
 
                               await order
                                   .add(({
-                                'uidUser': cartModel.uidUser,
-                                'idProduct': cartModel.idProduct,
+                                'uid_user': cartModel.uidUser,
+                                'id_product': cartModel.idProduct,
                                 'size': cartModel.size,
                                 'qty': cartModel.qty,
-                                'subTotal': cartModel.subTotal,
-                                'ongkosKirim': alamatController.cost.value,
-                                'totalTagihan':
-                                    totalAll + alamatController.cost.value,
+                                'sub_total': cartModel.subTotal,
+                                'shipping_cost': addressController.cost.value,
+                                'total':
+                                    totalAll + addressController.cost.value,
                                 'time': cartModel.time,
-                                'isPay': cartModel.isPay,
-                                'isConfirm': false,
-                                'isRating': isRating,
-                                'alamat': alamat,
+                                'is_pay': cartModel.isPay,
+                                'is_confirm': false,
+                                'is_rating': isRating,
+                                'address': alamat,
+                                'shipping_number': '',
                                 'service':
-                                    '${alamatController.kurir.toUpperCase()} - ${alamatController.service}',
-                                'buktiBayar': '',
-                                'timeStamp': DateTime.now()
+                                    '${addressController.kurir.toUpperCase()} - ${addressController.service}',
+                                'proof_of_payment': '',
+                                'time_stamp': DateTime.now()
                               }))
                                   .then((value) async {
+                                minusStock(cartModel.idProduct, cartModel.qty,
+                                    cartModel.size);
                                 await cart.delete();
                                 isLoading.value = false;
                                 Get.offAll(const Home());
@@ -276,7 +279,7 @@ class Checkout extends StatelessWidget {
                                       content: Column(children: [
                                         Image.asset('assets/success7.gif'),
                                         Text(
-                                          'Segera Lakukan Pembayaran Sebelum 24 Jam Sebelum Pesanan Otomatis Batal',
+                                          'Segera Lakukan Pembayaran Sebelum Pesanan Dibatalkan Oleh Admin',
                                           style: GoogleFonts.poppins(
                                               color: Colors.black),
                                           textAlign: TextAlign.justify,
@@ -318,5 +321,18 @@ class Checkout extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+minusStock(List<String> listProduct, List<int> qty, List<int> size) async {
+  final firebase = FirebaseFirestore.instance;
+  final product = firebase.collection('product');
+  for (int i = 0; i < listProduct.length; i++) {
+    var querySnapshot = await product.doc(listProduct[i]).get();
+    Map<String, dynamic>? data = querySnapshot.data();
+    var currentStock = data!['size${size[i]}'];
+    var stockNew = currentStock - qty[i];
+    qty[i] = stockNew;
+    product.doc(listProduct[i]).update(({'size${size[i]}': stockNew}));
   }
 }

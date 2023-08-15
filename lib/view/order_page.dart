@@ -25,7 +25,7 @@ class OrderPage extends StatelessWidget {
     final orderRef = firebase.collection('order');
     final order = firebase
         .collection('order')
-        .where('uidUser', isEqualTo: auth)
+        .where('uid_user', isEqualTo: auth)
         .withConverter<OrderModel>(
             fromFirestore: (snapshot, _) =>
                 OrderModel.fromJson(snapshot.data()),
@@ -108,7 +108,9 @@ class OrderPage extends StatelessWidget {
                                       ),
                                       orderModel.isPay == true
                                           ? Text(
-                                              'Menunggu Konfirmasi Admin',
+                                              orderModel.isConfirm != true
+                                                  ? 'Menunggu Konfirmasi Admin'
+                                                  : 'Sedang Di Kirim',
                                               style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.green),
@@ -210,8 +212,10 @@ class OrderPage extends StatelessWidget {
                                                           data.data().qty;
                                                       final listProduct =
                                                           data.data().idProduct;
+                                                      final listSize =
+                                                          data.data().size;
                                                       plusStock(listProduct,
-                                                          listStock);
+                                                          listStock, listSize);
                                                       orderRef.doc(id).delete();
                                                       showDialog(
                                                         context: context,
@@ -426,15 +430,15 @@ class OrderPage extends StatelessWidget {
   }
 }
 
-plusStock(List<String> listProduct, List<int> listStock) async {
+plusStock(List<String> listProduct, List<int> listStock, List<int> size) async {
   final firebase = FirebaseFirestore.instance;
   final product = firebase.collection('product');
   for (int i = 0; i < listProduct.length; i++) {
     var querySnapshot = await product.doc(listProduct[i]).get();
     Map<String, dynamic>? data = querySnapshot.data();
-    var currentStock = data!['stock'];
+    var currentStock = data!['size${size[i]}'];
     var stockNew = currentStock + listStock[i];
     listStock[i] = stockNew;
-    product.doc(listProduct[i]).update(({'stock': stockNew}));
+    product.doc(listProduct[i]).update(({'size${size[i]}': stockNew}));
   }
 }

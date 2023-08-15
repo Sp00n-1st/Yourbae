@@ -3,10 +3,10 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../controller/alamat_controller.dart';
+import '../controller/address_controller.dart';
 import '../model/city_model.dart';
 
-class Kota extends GetView<AlamatController> {
+class Kota extends GetView<AddressController> {
   const Kota({
     Key? key,
     required this.provId,
@@ -15,7 +15,7 @@ class Kota extends GetView<AlamatController> {
 
   @override
   Widget build(BuildContext context) {
-    AlamatController alamatController = Get.put(AlamatController());
+    AddressController addressController = Get.put(AddressController());
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -48,10 +48,10 @@ class Kota extends GetView<AlamatController> {
         onChanged: (cityValue) {
           if (cityValue != null) {
             controller.kotaTujuanId.value = int.parse(cityValue.cityId!);
-            alamatController.namaKotaKab.value = cityValue.cityName!;
+            addressController.namaKotaKab.value = cityValue.cityName!;
           } else {
-            alamatController.kurir.value = '';
-            alamatController.cost.value = 0;
+            addressController.kurir.value = '';
+            addressController.cost.value = 0;
             controller.kotaTujuanId.value = 0;
           }
           controller.showButton();

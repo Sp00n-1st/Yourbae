@@ -78,7 +78,7 @@ class MainView extends StatelessWidget {
               () => StreamBuilder(
                   stream: firebaseController
                       .queryProduct()
-                      .orderBy('nameProduct', descending: false)
+                      .orderBy('name_product', descending: false)
                       .where('category', isEqualTo: controller.category.value)
                       .snapshots(),
                   builder: (context, snapshot) {

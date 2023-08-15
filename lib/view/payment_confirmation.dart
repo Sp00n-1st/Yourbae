@@ -267,8 +267,8 @@ class PaymentConfirmation extends StatelessWidget {
                                     await order
                                         .doc(id)
                                         .update(({
-                                          'isPay': true,
-                                          'buktiBayar':
+                                          'is_pay': true,
+                                          'proof_of_payment':
                                               photoController.downloadUrl.value
                                         }))
                                         .then(

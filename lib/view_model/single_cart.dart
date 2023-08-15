@@ -114,9 +114,9 @@ class SingleCart extends StatelessWidget {
                                             cartModel.qty.removeAt(index);
                                             cartModel.size.removeAt(index);
                                             cart.update(({
-                                              'idProduct': cartModel.idProduct,
+                                              'id_product': cartModel.idProduct,
                                               'qty': cartModel.qty,
-                                              'subTotal': cartModel.subTotal,
+                                              'sub_total': cartModel.subTotal,
                                               'size': cartModel.size
                                             }));
                                             showToast('Item Berhasil Di Hapus',

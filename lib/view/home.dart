@@ -42,7 +42,7 @@ class Home extends StatelessWidget {
             const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (snapshot.data!['isDisable'] == true) {
+          } else if (snapshot.data!['is_disable'] == true) {
             authController.logoutAuth(false);
           }
           return Scaffold(

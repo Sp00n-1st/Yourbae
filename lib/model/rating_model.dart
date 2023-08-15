@@ -17,9 +17,9 @@ class RatingModel {
   RatingModel.fromJson(Map<String, dynamic>? json)
       : this(
             comment: json!['comment'] as String,
-            createdAt: json['createdAt'] as Timestamp,
-            idProduct: json['idProduct'] as String,
-            uidUser: json['uidUser'] as String,
+            createdAt: json['created_at'] as Timestamp,
+            idProduct: json['id_product'] as String,
+            uidUser: json['uid_user'] as String,
             size: json['size'] as int,
             star: json['star'] as double);
 

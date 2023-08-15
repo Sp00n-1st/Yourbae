@@ -1,5 +1,5 @@
 class UserModel {
-  final String name, email, nomorHP, kodeNegara, kodeNomorNegara;
+  final String name, email, mobileNumberPhone, countryCode, countryNumberCode;
   final String? imageProfile, token;
   final bool isDisable;
 
@@ -7,9 +7,9 @@ class UserModel {
     required this.token,
     required this.email,
     required this.name,
-    required this.kodeNegara,
-    required this.kodeNomorNegara,
-    required this.nomorHP,
+    required this.countryCode,
+    required this.countryNumberCode,
+    required this.mobileNumberPhone,
     required this.imageProfile,
     required this.isDisable,
   });
@@ -19,11 +19,11 @@ class UserModel {
           email: json!['email'] as String,
           token: json['token'] as String?,
           name: json['name'] as String,
-          kodeNegara: json['kodeNegara'] as String,
-          kodeNomorNegara: json['kodeNomorNegara'] as String,
-          nomorHP: json['nomorHP'] as String,
-          isDisable: json['isDisable'] as bool,
-          imageProfile: json['imageProfile'] as String?,
+          countryCode: json['country_code'] as String,
+          countryNumberCode: json['country_number_code'] as String,
+          mobileNumberPhone: json['mobile_number_phone'] as String,
+          isDisable: json['is_disable'] as bool,
+          imageProfile: json['image_profile'] as String?,
         );
 
   Map<String, Object?> toJson() {
@@ -33,9 +33,9 @@ class UserModel {
       'name': name,
       'isDisable': isDisable,
       'imageProfile': imageProfile,
-      'kodeNegara': kodeNegara,
-      'kodeNomorNegara': kodeNomorNegara,
-      'nomorHP': nomorHP,
+      'countryCode': countryCode,
+      'countryNumberCode': countryNumberCode,
+      'mobileNumberPhone': mobileNumberPhone,
     };
   }
 }

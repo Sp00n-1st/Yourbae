@@ -19,9 +19,9 @@ class Register extends StatelessWidget {
   Widget build(BuildContext context) {
     CreateUserController createUserController = Get.put(CreateUserController());
     Controller controller = Get.put(Controller());
-    String nomorHP = '';
-    String kodeNegara = '';
-    String kodeNomorNegara = '';
+    String mobileNumberPhone = '';
+    String countryCode = '';
+    String countryNumberCode = '';
     TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
@@ -116,9 +116,9 @@ class Register extends StatelessWidget {
                             ),
                           ),
                           onChanged: (phone) {
-                            nomorHP = phone.number;
-                            kodeNomorNegara = phone.countryCode;
-                            kodeNegara = phone.countryISOCode;
+                            mobileNumberPhone = phone.number;
+                            countryNumberCode = phone.countryCode;
+                            countryCode = phone.countryISOCode;
                           },
                           onCountryChanged: (country) {},
                         ),
@@ -149,9 +149,9 @@ class Register extends StatelessWidget {
                                           emailController.text,
                                           passwordController.text,
                                           nameController.text,
-                                          kodeNegara,
-                                          kodeNomorNegara,
-                                          nomorHP,
+                                          countryCode,
+                                          countryNumberCode,
+                                          mobileNumberPhone,
                                           null,
                                           null,
                                           context);

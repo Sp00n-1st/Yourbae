@@ -3,17 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../controller/alamat_controller.dart';
+import '../controller/address_controller.dart';
 
-class Kurir extends GetView<AlamatController> {
+class Kurir extends GetView<AddressController> {
   const Kurir({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var alamatController = Get.put(AlamatController());
-    var data = alamatController.rajaOngkirModel!.rajaongkir!.results![0];
+    var addressController = Get.put(AddressController());
+    var data = addressController.rajaOngkirModel!.rajaongkir!.results![0];
     return Column(
       children: [
         SizedBox(
@@ -31,13 +31,13 @@ class Kurir extends GetView<AlamatController> {
               .map(
                 (e) => GestureDetector(
                   onTap: () {
-                    alamatController.cost.value = e.cost![0].value!;
-                    alamatController.service.value = e.service!;
+                    addressController.cost.value = e.cost![0].value!;
+                    addressController.service.value = e.service!;
                   },
                   child: Obx(
                     () => ListTile(
                       tileColor:
-                          alamatController.cost.value == e.cost![0].value!
+                          addressController.cost.value == e.cost![0].value!
                               ? Colors.green.shade200
                               : null,
                       title: Text(

@@ -6,7 +6,7 @@ import 'package:oktoast/oktoast.dart';
 import '../model/raja_ongkir_model.dart';
 import '../model/province_model.dart';
 
-class AlamatController extends GetxController {
+class AddressController extends GetxController {
   var hiddenKotaAsal = true.obs;
   var provAsalId = 22.obs;
   var kotaAsalId = 22.obs;

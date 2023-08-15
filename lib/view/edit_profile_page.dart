@@ -20,10 +20,10 @@ class EditProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var name = TextEditingController(text: userModel.name).obs;
-    TextEditingController nomorHP =
-        TextEditingController(text: userModel.nomorHP);
-    String kodeNegara = userModel.kodeNegara;
-    String kodeNomorNegara = userModel.kodeNomorNegara;
+    TextEditingController mobileNumberPhone =
+        TextEditingController(text: userModel.mobileNumberPhone);
+    String countryCode = userModel.countryCode;
+    String countryNumberCode = userModel.countryNumberCode;
     var isEmpty = false.obs;
     var validNumber = true.obs;
     var control = false.obs;
@@ -158,8 +158,8 @@ class EditProfilePage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: 20, right: 20).r,
                 child: Obx(
                   () => IntlPhoneField(
-                    initialCountryCode: userModel.kodeNegara,
-                    initialValue: userModel.nomorHP,
+                    initialCountryCode: userModel.countryCode,
+                    initialValue: userModel.mobileNumberPhone,
                     disableLengthCheck: validNumber.value,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     cursorHeight: 20.h,
@@ -187,15 +187,15 @@ class EditProfilePage extends StatelessWidget {
                       if (phone.number.isEmpty) {
                         control.value = true;
                       } else {
-                        nomorHP.text = phone.number;
-                        kodeNegara = phone.countryISOCode;
-                        kodeNomorNegara = phone.countryCode;
+                        mobileNumberPhone.text = phone.number;
+                        countryCode = phone.countryISOCode;
+                        countryNumberCode = phone.countryCode;
                         control.value = false;
                       }
                     },
                     onCountryChanged: (country) {
-                      kodeNegara = country.code;
-                      kodeNomorNegara = country.dialCode;
+                      countryCode = country.code;
+                      countryNumberCode = country.dialCode;
                     },
                   ),
                 ),
@@ -225,16 +225,16 @@ class EditProfilePage extends StatelessWidget {
                         ? null
                         : () async {
                             if (name.value.text.isNotEmpty &&
-                                nomorHP.text.isNotEmpty &&
-                                kodeNegara.isNotEmpty &&
-                                kodeNomorNegara.isNotEmpty) {
+                                mobileNumberPhone.text.isNotEmpty &&
+                                countryCode.isNotEmpty &&
+                                countryNumberCode.isNotEmpty) {
                               editController.isLoading.value = true;
                               await editController.editUser(
                                   userModel,
                                   name.value.text,
-                                  kodeNegara,
-                                  kodeNomorNegara,
-                                  nomorHP.text);
+                                  countryCode,
+                                  countryNumberCode,
+                                  mobileNumberPhone.text);
                             } else {
                               showToast('Harap Isi Semua Kolom Data',
                                   position: const ToastPosition(

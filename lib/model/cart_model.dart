@@ -19,14 +19,14 @@ class CartModel {
 
   CartModel.fromJson(Map<String, dynamic>? json)
       : this(
-            uidUser: json!['uidUser'] as String,
-            idProduct: (json['idProduct'] as List).cast<String>(),
+            uidUser: json!['uid_user'] as String,
+            idProduct: (json['id_product'] as List).cast<String>(),
             qty: (json['qty'] as List).cast<int>(),
             size: (json['size'] as List).cast<int>(),
-            isCheckout: json['isCheckout'] as bool,
-            isPay: json['isPay'] as bool,
+            isCheckout: json['is_checkout'] as bool,
+            isPay: json['is_pay'] as bool,
             time: json['time'] as int,
-            subTotal: (json['subTotal'] as List).cast<num>());
+            subTotal: (json['sub_total'] as List).cast<num>());
   Map<String, Object?> toJson() {
     return {
       'uidUser': uidUser,

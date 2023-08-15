@@ -15,17 +15,17 @@ class CreateUserController extends GetxController {
       String email,
       String password,
       String name,
-      String kodeNegara,
-      String kodeNomorNegara,
-      String nomorHP,
+      String countryCode,
+      String countryNumberCode,
+      String mobileNumberPhone,
       String? imageProfile,
       String? token,
       BuildContext context) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.createUserWithEmailAndPassword(email: email, password: password);
     await auth.currentUser!.sendEmailVerification();
-    await createUserToStorage(email, auth.currentUser!.uid, name, kodeNegara,
-        kodeNomorNegara, nomorHP, imageProfile, token);
+    await createUserToStorage(email, auth.currentUser!.uid, name, countryCode,
+        countryNumberCode, mobileNumberPhone, imageProfile, token);
     showDialog(
       context: context,
       builder: (context) {
@@ -67,24 +67,24 @@ class CreateUserController extends GetxController {
       String email,
       String uid,
       String name,
-      String kodeNegara,
-      String kodeNomorNegara,
-      String nomorHP,
+      String countryCode,
+      String countryNumberCode,
+      String mobileNumberPhone,
       String? imageProfile,
       String? token) async {
     bool isDisable = false;
     FirebaseFirestore firebase = FirebaseFirestore.instance;
     final userCreated = <String, dynamic>{
       'token': token,
-      'isDisable': isDisable,
+      'is_disable': isDisable,
       'name': name,
-      'kodeNegara': kodeNegara,
-      'kodeNomorNegara': kodeNomorNegara,
-      'nomorHP': nomorHP,
+      'country_code': countryCode,
+      'country_number_code': countryNumberCode,
+      'mobile_number_phone': mobileNumberPhone,
       'email': email,
-      'imageProfile': imageProfile,
-      'isLogin': null,
-      'lastLogin': null
+      'image_profile': imageProfile,
+      'is_login': null,
+      'last_login': null
     };
     firebase.collection('user').doc(uid).set(userCreated);
     isLoading.value = false;

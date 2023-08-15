@@ -474,8 +474,8 @@ class ProductDetailState extends State<ProductDetail>
                   color: Colors.white,
                   child: StreamBuilder(
                       stream: rating
-                          .where('idProduct', isEqualTo: widget.id)
-                          .orderBy('createdAt', descending: false)
+                          .where('id_product', isEqualTo: widget.id)
+                          .orderBy('created_at', descending: false)
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
@@ -559,7 +559,7 @@ add(CartModel? cartModel, num subTotal, int qty, int size, String idProduct,
   List<num> subTotalStorage = cartModel.subTotal;
   bool isCheckout = cartModel.isCheckout;
   bool isPay = cartModel.isPay;
-  if (sizeStorage.contains(size)) {
+  if (sizeStorage.contains(size) && idProductStorage.contains(idProduct)) {
     showDialog(
       context: context,
       builder: (context) {
@@ -633,14 +633,14 @@ addFirst(num subTotal, num qty, String idProduct, int size, String auth,
   final date = DateFormat('yyyyMMddHHmmss').format(now);
 
   await FirebaseFirestore.instance.collection('cart').doc(auth).set(({
-        'uidUser': auth,
+        'uid_user': auth,
         'time': int.parse(date),
-        'idProduct': idProductStorage,
+        'id_product': idProductStorage,
         'qty': qtyStorage,
         'size': sizeStorage,
-        'subTotal': subTotalStorage,
-        'isCheckout': false,
-        'isPay': false
+        'sub_total': subTotalStorage,
+        'is_checkout': false,
+        'is_pay': false
       }));
   showDialog(
     context: context,
@@ -676,13 +676,13 @@ addToStorage(
     bool isPay,
     String auth) async {
   await FirebaseFirestore.instance.collection('cart').doc(auth).set(({
-        'uidUser': uidUser,
+        'uid_user': uidUser,
         'time': timeStorage,
-        'idProduct': idProductStorage,
+        'id_product': idProductStorage,
         'qty': qtyStorage,
         'size': sizeStorage,
-        'subTotal': subTotalStorage,
-        'isCheckout': isCheckout,
-        'isPay': isPay,
+        'sub_total': subTotalStorage,
+        'is_checkout': isCheckout,
+        'is_pay': isPay,
       }));
 }

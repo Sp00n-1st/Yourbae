@@ -9,9 +9,9 @@ class Store {
 
   Store.fromJson(Map<String, dynamic>? json)
       : this(
-          noRekening: json!['noRekening'] as String,
-          rekeningName: json['rekeningName'] as String,
-          noCustomerService: json['noCustomerService'] as String,
+          noRekening: json!['account_number'] as String,
+          rekeningName: json['account_name'] as String,
+          noCustomerService: json['no_customer_service'] as String,
         );
 
   Map<String, Object?> toJson() {
