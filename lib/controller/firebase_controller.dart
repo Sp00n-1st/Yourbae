@@ -21,12 +21,12 @@ class FirebaseController extends GetxController {
     final ratingRef = firebase.collection('rating');
     await ratingRef
         .add(({
-          'idProduct': idProduct,
+          'id_product': idProduct,
           'size': size,
-          'uidUser': user!.uid,
+          'uid_user': user!.uid,
           'star': star,
           'comment': comment,
-          'createdAt': DateTime.now()
+          'created_at': DateTime.now()
         }))
         .then((value) => {isLoading.value = false});
   }
@@ -58,7 +58,7 @@ class FirebaseController extends GetxController {
   Query<WishlistModel> queryWishlist() {
     return firebase
         .collection('wishlist')
-        .where('uidUser', isEqualTo: auth)
+        .where('uid_user', isEqualTo: auth)
         .withConverter<WishlistModel>(
             fromFirestore: (snapshot, _) =>
                 WishlistModel.fromJson(snapshot.data()),
@@ -85,7 +85,7 @@ class FirebaseController extends GetxController {
       }
     }
     if (isExist) {
-      await ref.add(({'uidUser': auth, 'idProduct': id})).then((value) => {
+      await ref.add(({'uid_user': auth, 'id_product': id})).then((value) => {
             showToast('Item Berhasil Ditambahkan Ke WishList',
                 textStyle: GoogleFonts.poppins(color: Colors.white),
                 position: const ToastPosition(align: Alignment.bottomCenter))

@@ -52,7 +52,7 @@ class ModalRating {
                                 ConnectionState.waiting) {
                               return const Center();
                             } else if (!snapshot.data!.exists) {
-                              return SizedBox();
+                              return const SizedBox();
                             }
                             return MaterialButton(
                                 onPressed: () {
@@ -61,8 +61,8 @@ class ModalRating {
                                     orderModel: orderModel,
                                     idOrder: idOrder,
                                     idProduct: snapshot.data!.id,
-                                    imageUrl: snapshot.data?['imageUrl'],
-                                    namaProduk: snapshot.data?['nameProduct'],
+                                    imageUrl: snapshot.data?['image_url'],
+                                    namaProduk: snapshot.data?['name_product'],
                                     size: orderModel.size[index],
                                     index: index,
                                   ));
@@ -79,7 +79,7 @@ class ModalRating {
                                         SizedBox(
                                           width: 220.w,
                                           child: Text(
-                                            snapshot.data?['nameProduct'],
+                                            snapshot.data?['name_product'],
                                             maxLines: 1,
                                             softWrap: true,
                                             overflow: TextOverflow.ellipsis,

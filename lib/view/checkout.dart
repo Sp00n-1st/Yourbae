@@ -30,9 +30,10 @@ class Checkout extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController alamatTextController = TextEditingController();
     List<Widget> listProduct = <Widget>[];
-    List<bool?> available = <bool?>[];
+    List<String> filterId = <String>[];
+    List<String> productName = <String>[];
+    List<int> productPrice = <int>[];
     List<bool> isRating = <bool>[];
-    int totalQty = 0;
     String alamat = '';
     FirebaseFirestore firebase = FirebaseFirestore.instance;
     AddressController addressController = Get.put(AddressController());
@@ -55,23 +56,30 @@ class Checkout extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasData) {
-              return SingleCart(
-                product: snapshot.data!.data()!,
-                cartModel: cartModel,
-                index: i,
-                isShowDelete: false,
-              );
+              if (snapshot.data!.data()!.isActive == false) {
+                cartModel.qty.removeAt(i);
+                cartModel.subTotal.removeAt(i);
+                cartModel.size.removeAt(i);
+                return const SizedBox();
+              } else {
+                productName.add(snapshot.data!.data()!.nameProduct);
+                productPrice.add(snapshot.data!.data()!.price);
+                filterId.add(snapshot.data!.id);
+                return SingleCart(
+                  product: snapshot.data!.data()!,
+                  cartModel: cartModel,
+                  index: i,
+                  isShowDelete: false,
+                );
+              }
             }
             return const CircularProgressIndicator();
           }));
     }
 
-    for (int i = 0; i < cartModel.idProduct.length; i++) {
-      available.add(null);
-    }
-    for (int i = 0; i < cartModel.idProduct.length; i++) {
-      totalQty += cartModel.qty[i];
-    }
+    // for (int i = 0; i < cartModel.idProduct.length; i++) {
+    //   available.add(null);
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -117,8 +125,8 @@ class Checkout extends StatelessWidget {
                           ),
                           Obx(() => addressController.hiddenRadio.isTrue
                               ? const SizedBox()
-                              : RadioButtonKurir(
-                                  qty: totalQty,
+                              : const RadioButtonKurir(
+                                  qty: 1,
                                 ))
                         ],
                       ),
@@ -146,7 +154,7 @@ class Checkout extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20).r,
                 width: double.infinity,
-                height: 121.h,
+                height: 95.h,
                 color: Colors.grey.shade200,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -158,17 +166,7 @@ class Checkout extends StatelessWidget {
                           children: [
                             SizedBox(
                                 width: 150.w,
-                                child: Text('Total Diskon',
-                                    style: GoogleFonts.poppins())),
-                            Text(': 3', style: GoogleFonts.poppins()),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            SizedBox(
-                                width: 150.w,
-                                child: Text(
-                                    'Total Harga (${cartModel.idProduct.length} Item)',
+                                child: Text('Total Harga',
                                     style: GoogleFonts.poppins())),
                             Text(
                                 ': ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll)}',
@@ -222,9 +220,7 @@ class Checkout extends StatelessWidget {
                         height: 50.h,
                         child: ElevatedButton(
                           onPressed: () async {
-                            for (int i = 0;
-                                i < cartModel.idProduct.length;
-                                i++) {
+                            for (int i = 0; i < filterId.length; i++) {
                               isRating.add(false);
                             }
                             if (alamatTextController.text.isEmpty ||
@@ -243,7 +239,9 @@ class Checkout extends StatelessWidget {
                               await order
                                   .add(({
                                 'uid_user': cartModel.uidUser,
-                                'id_product': cartModel.idProduct,
+                                'id_product': filterId,
+                                'product': productName,
+                                'price': productPrice,
                                 'size': cartModel.size,
                                 'qty': cartModel.qty,
                                 'sub_total': cartModel.subTotal,
@@ -262,8 +260,8 @@ class Checkout extends StatelessWidget {
                                 'time_stamp': DateTime.now()
                               }))
                                   .then((value) async {
-                                minusStock(cartModel.idProduct, cartModel.qty,
-                                    cartModel.size);
+                                minusStock(
+                                    filterId, cartModel.qty, cartModel.size);
                                 await cart.delete();
                                 isLoading.value = false;
                                 Get.offAll(const Home());

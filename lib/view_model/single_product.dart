@@ -33,7 +33,7 @@ class SingleProduct extends StatelessWidget {
       child: StreamBuilder<QuerySnapshot<RatingModel>>(
           stream: firebaseController
               .queryRating()
-              .where('idProduct', isEqualTo: id)
+              .where('id_product', isEqualTo: id)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -80,7 +80,7 @@ class SingleProduct extends StatelessWidget {
                                 ConnectionState.waiting) {
                             } else if (snapshot.hasData) {
                               bool isIdFound = snapshot.data!.docs
-                                  .any((doc) => doc['idProduct'] == id);
+                                  .any((doc) => doc['id_product'] == id);
                               return Align(
                                 alignment: Alignment.topRight,
                                 child: SizedBox(

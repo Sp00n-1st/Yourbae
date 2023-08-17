@@ -142,7 +142,7 @@ class RatingPage extends StatelessWidget {
                                   orderModel.isRating[index] = true;
                                   firebaseController.isLoading.value = true;
                                   order.doc(idOrder).update(
-                                      ({'isRating': orderModel.isRating}));
+                                      ({'is_rating': orderModel.isRating}));
                                   firebaseController.addRating(
                                       idProduct,
                                       star.value,

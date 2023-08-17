@@ -75,7 +75,8 @@ class OrderPage extends StatelessWidget {
                         .format(orderModel.timeStamp.toDate());
                     return Container(
                       margin:
-                          const EdgeInsets.only(right: 5, left: 5, bottom: 20),
+                          const EdgeInsets.only(right: 5, left: 5, bottom: 35)
+                              .r,
                       decoration: BoxDecoration(
                           color: Colors.grey[300],
                           border: Border.all(color: Colors.black),
@@ -418,7 +419,7 @@ class OrderPage extends StatelessWidget {
                                   ],
                                 ),
                           SizedBox(
-                            height: 10.h,
+                            height: 20.h,
                           ),
                         ],
                       ),

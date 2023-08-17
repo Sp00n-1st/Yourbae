@@ -32,7 +32,7 @@ class OrderList extends StatelessWidget {
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center();
             } else if (!snapshot.data!.exists) {
-              return SizedBox();
+              return const SizedBox();
             }
             return SingleOrder(
                 box1: snapshot.data?['name_product'],

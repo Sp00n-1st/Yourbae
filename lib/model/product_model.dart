@@ -2,6 +2,7 @@ class Product {
   final String nameProduct, descItem, category;
   final List<String> imageUrl;
   final int price, size37, size38, size39, size40, size41, size42;
+  final bool isActive;
 
   Product(
       {required this.nameProduct,
@@ -9,6 +10,7 @@ class Product {
       required this.imageUrl,
       required this.descItem,
       required this.price,
+      required this.isActive,
       required this.size37,
       required this.size38,
       required this.size39,
@@ -23,6 +25,7 @@ class Product {
           imageUrl: (json['image_url'] as List).cast<String>(),
           descItem: json['desc_item'] as String,
           price: json['price'] as int,
+          isActive: json['is_active'] as bool,
           size37: json['size37'] as int,
           size38: json['size38'] as int,
           size39: json['size39'] as int,
@@ -37,6 +40,7 @@ class Product {
       'category': category,
       'imageUrl': imageUrl,
       'price': price,
+      'isActive': isActive,
       'descItem': descItem,
       'size37': size37,
       'size38': size38,

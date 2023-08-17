@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:oktoast/oktoast.dart';
 import '../model/product_model.dart';
 import '../view/checkout.dart';
 import '../view_model/single_cart.dart';
@@ -17,11 +18,13 @@ class CartList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> listProduct = <Widget>[];
-    List<bool?> available = <bool?>[];
+    List<bool> isActive = <bool>[];
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
     final firebase = FirebaseFirestore.instance;
     num totalAll = 0;
+    var loading = true.obs;
+    var qty = 0.obs;
 
     for (int i = 0; i < cartModel!.idProduct.length; i++) {
       final product = firebase
@@ -36,24 +39,42 @@ class CartList extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasData) {
-              return SingleCart(
-                product: snapshot.data!.data()!,
-                cartModel: cartModel!,
-                index: i,
-                isShowDelete: true,
-              );
+              if (snapshot.data!.data()!.isActive == false) {
+                qty.value -= 1;
+                if (totalAll == 0) {
+                } else {
+                  // totalAll -= cartModel!.subTotal[i];
+                }
+                return const SizedBox();
+              } else {
+                totalAll += cartModel!.subTotal[i];
+                qty.value += 1;
+                return SingleCart(
+                  product: snapshot.data!.data()!,
+                  cartModel: cartModel!,
+                  index: i,
+                  isShowDelete: true,
+                );
+              }
             }
             return const CircularProgressIndicator();
           }));
+      if (i == cartModel!.idProduct.length - 1) {
+        loading.value = !loading.value;
+        Future.delayed(
+          const Duration(milliseconds: 100),
+          () => loading.value = !loading.value,
+        );
+      }
     }
-
-    for (int i = 0; i < cartModel!.idProduct.length; i++) {
-      available.add(null);
-    }
-    for (int i = 0; i < cartModel!.idProduct.length; i++) {
-      totalAll += cartModel!.subTotal[i];
-    }
-
+    // for (int i = 0; i < cartModel!.idProduct.length; i++) {
+    //   available.add(null);
+    // }
+    // for (int i = 0; i < cartModel!.idProduct.length; i++) {
+    //   totalAll += cartModel!.subTotal[i];
+    // }
+    // final Future<void> delayedFuture =
+    //     Future.delayed(const Duration(milliseconds: 10));
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       body: Center(
@@ -80,18 +101,44 @@ class CartList extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Total : ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll)}',
-                      style: GoogleFonts.poppins(),
-                    ),
+                    // FutureBuilder<void>(
+                    //   future: delayedFuture,
+                    //   builder: (context, snapshot) {
+                    //     if (snapshot.connectionState ==
+                    //         ConnectionState.waiting) {
+                    //       return Padding(
+                    //           padding: EdgeInsets.only(left: 20.r),
+                    //           child:
+                    //               const CircularProgressIndicator()); // Tampilkan loading indicator selama penundaan
+                    //     } else {
+                    //       return Text(
+                    //         'Total : ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll)}',
+                    //         style: GoogleFonts.poppins(),
+                    //       );
+                    //     }
+                    //   },
+                    // ),
+                    Obx(() => loading.isTrue
+                        ? Text(
+                            'Total : ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll <= 0 ? 0 : totalAll)}',
+                            style: GoogleFonts.poppins(),
+                          )
+                        : const SizedBox()),
                     FloatingActionButton.large(
                       backgroundColor: Colors.green,
                       onPressed: () async {
-                        Get.to(Checkout(
-                          cartModel: cartModel!,
-                          totalAll: totalAll,
-                          id: id,
-                        ));
+                        print(qty);
+                        if (qty.value >= 0 && totalAll != 0) {
+                          Get.to(Checkout(
+                            cartModel: cartModel!,
+                            totalAll: totalAll,
+                            id: id,
+                          ));
+                        } else {
+                          showToast('Keranjang Masih Kosong!',
+                              position: const ToastPosition(
+                                  align: Alignment.bottomCenter));
+                        }
                       },
                       child: const Icon(
                         Icons.shopping_basket_outlined,

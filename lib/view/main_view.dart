@@ -80,9 +80,11 @@ class MainView extends StatelessWidget {
                       .queryProduct()
                       .orderBy('name_product', descending: false)
                       .where('category', isEqualTo: controller.category.value)
+                      .where('is_active', isEqualTo: true)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
+                      print(snapshot.error.toString());
                       return Center(
                         child: Text(snapshot.error.toString()),
                       );
