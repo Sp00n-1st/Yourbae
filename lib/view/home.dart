@@ -46,7 +46,6 @@ class Home extends StatelessWidget {
             authController.logoutAuth(false);
           }
           return Scaffold(
-            resizeToAvoidBottomInset: true,
             backgroundColor: Colors.grey.shade200,
             body: PageView(
               physics: const NeverScrollableScrollPhysics(),

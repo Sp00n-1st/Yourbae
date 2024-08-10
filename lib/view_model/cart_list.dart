@@ -62,7 +62,7 @@ class CartList extends StatelessWidget {
       if (i == cartModel!.idProduct.length - 1) {
         loading.value = !loading.value;
         Future.delayed(
-          const Duration(milliseconds: 100),
+          const Duration(milliseconds: 500),
           () => loading.value = !loading.value,
         );
       }
@@ -120,7 +120,7 @@ class CartList extends StatelessWidget {
                     // ),
                     Obx(() => loading.isTrue
                         ? Text(
-                            'Total : ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll <= 0 ? 0 : totalAll)}',
+                            'Total : ${NumberFormat.currency(locale: 'id', symbol: 'Rp. ').format(totalAll)}',
                             style: GoogleFonts.poppins(),
                           )
                         : const SizedBox()),

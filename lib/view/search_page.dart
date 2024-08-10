@@ -70,6 +70,7 @@ class SearchPage extends StatelessWidget {
                       .where('search',
                           isLessThan:
                               '${controller.textEditingController.value.text.toLowerCase()}z')
+                      .where('is_active', isEqualTo: true)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {

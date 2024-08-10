@@ -125,7 +125,18 @@ class AuthController extends GetxController {
                 height: 30.h,
                 child: ElevatedButton(
                     onPressed: () async {
-                      await auth.sendEmailVerification();
+                      try {
+                        await auth.sendEmailVerification().then((value) =>
+                            showToast('Email Verifikasi Sudah Dikirim Ulang',
+                                textStyle: GoogleFonts.poppins(),
+                                position: const ToastPosition(
+                                    align: Alignment.center)));
+                      } catch (e) {
+                        showToast(e.toString(),
+                            textStyle: GoogleFonts.poppins(),
+                            position:
+                                const ToastPosition(align: Alignment.center));
+                      }
                       await FirebaseAuth.instance.signOut();
                       Navigator.pop(context);
                     },

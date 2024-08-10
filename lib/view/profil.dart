@@ -45,7 +45,7 @@ class Profil extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(47.sp, 50.sp, 47.sp, 0),
               width: double.infinity,
               height: double.infinity,
-              margin: EdgeInsets.only(top: 150.sp),
+              margin: EdgeInsets.only(top: 160.sp),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -198,27 +198,16 @@ class Profil extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.topCenter,
-              child: Container(
-                margin: EdgeInsets.only(top: 40.sp),
-                width: 154.w,
-                height: 154.h,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border:
-                        Border.all(width: 5, color: const Color(0xff587179)),
-                    borderRadius: BorderRadius.circular(17.sp)),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.sp),
-                    child: userModel.imageProfile == null
-                        ? Image.network(
-                            'https://www.its.ac.id/aktuaria/wp-content/uploads/sites/100/2018/03/user-320x320.png',
-                            fit: BoxFit.fill,
-                          )
-                        : Image.network(
-                            userModel.imageProfile!,
-                            fit: BoxFit.fill,
-                          )),
-              ),
+              child: userModel.imageProfile == null
+                  ? CircleAvatar(
+                      radius: 100.r,
+                      backgroundImage: const NetworkImage(
+                          'https://www.its.ac.id/aktuaria/wp-content/uploads/sites/100/2018/03/user-320x320.png'),
+                    )
+                  : CircleAvatar(
+                      radius: 100.r,
+                      backgroundImage: NetworkImage(userModel.imageProfile!),
+                    ),
             ),
           ],
         ),

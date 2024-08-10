@@ -111,7 +111,10 @@ class OrderPage extends StatelessWidget {
                                           ? Text(
                                               orderModel.isConfirm != true
                                                   ? 'Menunggu Konfirmasi Admin'
-                                                  : 'Sedang Di Kirim',
+                                                  : !orderModel.isRating
+                                                          .contains(true)
+                                                      ? 'Sedang Di Kirim'
+                                                      : 'Pesanan Telah Diterima',
                                               style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.green),

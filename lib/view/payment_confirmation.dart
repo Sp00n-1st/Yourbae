@@ -194,7 +194,7 @@ class PaymentConfirmation extends StatelessWidget {
                                     ),
                                     isExpandedAtm.isTrue
                                         ? Text(
-                                            'Panduan Bayar\nPilih Menu Transaksi Lainnya\nPilih Transfer\nPilih Ke Rekening BCA\nInput Nomor Rekening\nPilih Benar\nMasukkan Jumlah Transfer\nPilih Benar\nMAsukkan PIN\nAmbil Bukti Bayar Anda\nUpload Bukti Pembayaran\nSelesai\n',
+                                            'Panduan Bayar\nPilih Menu Transaksi Lainnya\nPilih Transfer\nPilih Ke Rekening BCA\nInput Nomor Rekening\nPilih Benar\nMasukkan Jumlah Transfer\nPilih Benar\nMasukkan PIN\nAmbil Bukti Bayar Anda\nUpload Bukti Pembayaran\nSelesai\n',
                                             style: GoogleFonts.poppins(
                                                 fontSize: 12.sp))
                                         : const SizedBox()

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:yourbae_project/controller/controller.dart';
 import 'package:yourbae_project/model/cart_model.dart';
 import 'package:intl/intl.dart';
 import 'package:yourbae_project/view/home.dart';
@@ -35,6 +36,7 @@ class Checkout extends StatelessWidget {
     List<int> productPrice = <int>[];
     List<bool> isRating = <bool>[];
     String alamat = '';
+    Controller controller = Get.put(Controller());
     FirebaseFirestore firebase = FirebaseFirestore.instance;
     AddressController addressController = Get.put(AddressController());
     CollectionReference<Map<String, dynamic>> order =
@@ -265,6 +267,7 @@ class Checkout extends StatelessWidget {
                                 await cart.delete();
                                 isLoading.value = false;
                                 Get.offAll(const Home());
+                                controller.selectedPages.value = 0;
                                 showDialog(
                                   context: context,
                                   builder: (context) {
